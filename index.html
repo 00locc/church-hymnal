@@ -7,293 +7,121 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #0e1117;
-      --surface:   #161b27;
-      --surface2:  #1c2333;
-      --border:    #232d42;
-      --border2:   #2d3a55;
-      --text:      #e8edf8;
-      --text2:     #8494b4;
-      --text3:     #4f6080;
-      --gold:      #e2b96a;
-      --gold-dim:  #a07a3a;
-      --blue:      #4a7fd4;
-      --blue-dim:  #2a4f8a;
-      --green:     #3dba78;
-      --red:       #e05555;
-      --font-h:    'Playfair Display', serif;
-      --font-b:    'Inter', sans-serif;
-      --r:         8px;
+      --bg:#0e1117; --surface:#161b27; --surface2:#1c2333;
+      --border:#232d42; --border2:#2d3a55;
+      --text:#e8edf8; --text2:#8494b4; --text3:#4f6080;
+      --gold:#e2b96a; --gold-dim:#a07a3a;
+      --blue:#4a7fd4; --blue-dim:#2a4f8a;
+      --green:#3dba78; --red:#e05555;
+      --font-h:'Playfair Display',serif; --font-b:'Inter',sans-serif; --r:8px;
     }
+    body { font-family:var(--font-b); background:var(--bg); color:var(--text); height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
 
-    body {
-      font-family: var(--font-b);
-      background: var(--bg);
-      color: var(--text);
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    #header { height:50px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 18px; gap:12px; flex-shrink:0; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-icon { width:30px; height:30px; background:linear-gradient(135deg,var(--gold-dim),var(--gold)); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+    .brand-name { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--text); }
+    .brand-sub { font-size:10px; color:var(--text3); letter-spacing:0.08em; text-transform:uppercase; margin-top:1px; }
+    #hdr-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+    .presenting-badge { display:none; align-items:center; gap:5px; background:rgba(61,186,120,0.12); border:1px solid rgba(61,186,120,0.3); color:var(--green); font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; }
+    .presenting-badge.show { display:flex; }
+    .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.25} }
+    .count-chip { font-size:11px; color:var(--text3); background:var(--surface2); padding:3px 9px; border-radius:20px; border:1px solid var(--border); }
 
-    /* ════════════════════════════════
-       HEADER
-    ════════════════════════════════ */
-    #header {
-      height: 50px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 18px;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon {
-      width: 30px; height: 30px;
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px;
-    }
-    .brand-name { font-family: var(--font-h); font-size: 15px; font-weight: 700; color: var(--text); }
-    .brand-sub  { font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
-    #hdr-right  { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-    .presenting-badge {
-      display: none; align-items: center; gap: 5px;
-      background: rgba(61,186,120,0.12); border: 1px solid rgba(61,186,120,0.3);
-      color: var(--green); font-size: 11px; font-weight: 600;
-      padding: 3px 10px; border-radius: 20px;
-    }
-    .presenting-badge.show { display: flex; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
-    .count-chip { font-size: 11px; color: var(--text3); background: var(--surface2); padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); }
+    #app { display:flex; flex:1; overflow:hidden; }
 
-    /* ════════════════════════════════
-       LAYOUT
-    ════════════════════════════════ */
-    #app { display: flex; flex: 1; overflow: hidden; }
+    #sidebar { width:240px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; }
+    .search-box { padding:10px; border-bottom:1px solid var(--border); }
+    .search-box input { width:100%; padding:8px 11px; background:var(--bg); border:1px solid var(--border2); border-radius:var(--r); font-size:13px; font-family:var(--font-b); color:var(--text); outline:none; }
+    .search-box input::placeholder { color:var(--text3); }
+    .search-box input:focus { border-color:var(--blue); }
+    #hymn-list { overflow-y:auto; flex:1; }
+    .hymn-item { padding:9px 14px; cursor:pointer; border-bottom:1px solid var(--border); transition:background 0.1s; }
+    .hymn-item:hover { background:var(--surface2); }
+    .hymn-item.active { background:rgba(74,127,212,0.1); border-left:2px solid var(--gold); }
+    .h-num { font-size:10px; font-weight:600; color:var(--text3); letter-spacing:0.04em; }
+    .h-tw { font-size:12px; font-weight:600; color:var(--text); margin-top:1px; }
+    .h-en { font-size:11px; color:var(--text2); margin-top:1px; }
+    .sidebar-footer { padding:9px 10px; border-top:1px solid var(--border); display:flex; gap:6px; }
+    .sb-btn { flex:1; padding:7px; border:1px solid var(--border2); border-radius:var(--r); background:transparent; color:var(--text2); font-size:12px; font-family:var(--font-b); cursor:pointer; transition:all 0.1s; }
+    .sb-btn:hover { background:var(--surface2); color:var(--text); }
+    .sb-btn.del { color:var(--red); border-color:rgba(224,85,85,0.25); }
+    .sb-btn.del:hover { background:rgba(224,85,85,0.08); }
 
-    /* ════════════════════════════════
-       SIDEBAR
-    ════════════════════════════════ */
-    #sidebar {
-      width: 240px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      flex-shrink: 0;
-    }
-    .search-box { padding: 10px; border-bottom: 1px solid var(--border); }
-    .search-box input {
-      width: 100%; padding: 8px 11px;
-      background: var(--bg); border: 1px solid var(--border2);
-      border-radius: var(--r); font-size: 13px; font-family: var(--font-b);
-      color: var(--text); outline: none;
-    }
-    .search-box input::placeholder { color: var(--text3); }
-    .search-box input:focus { border-color: var(--blue); }
+    #presenter { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); }
 
-    #hymn-list { overflow-y: auto; flex: 1; }
-    .hymn-item {
-      padding: 10px 14px; cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-    .hymn-item:hover { background: var(--surface2); }
-    .hymn-item.active {
-      background: rgba(74,127,212,0.1);
-      border-left: 2px solid var(--gold);
-    }
-    .h-num  { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.04em; }
-    .h-tw   { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 1px; }
-    .h-en   { font-size: 11px; color: var(--text2); margin-top: 1px; }
-
-    .sidebar-footer {
-      padding: 9px 10px; border-top: 1px solid var(--border);
-      display: flex; gap: 6px;
-    }
-    .sb-btn {
-      flex: 1; padding: 7px; border: 1px solid var(--border2);
-      border-radius: var(--r); background: transparent;
-      color: var(--text2); font-size: 12px; font-family: var(--font-b);
-      cursor: pointer; transition: all 0.1s;
-    }
-    .sb-btn:hover { background: var(--surface2); color: var(--text); }
-    .sb-btn.del { color: var(--red); border-color: rgba(224,85,85,0.25); }
-    .sb-btn.del:hover { background: rgba(224,85,85,0.08); }
-
-    /* ════════════════════════════════
-       PRESENTER PANEL
-    ════════════════════════════════ */
-    #presenter { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
-
-    /* Preview screen */
-    #preview-wrap {
-      flex-shrink: 0; margin: 12px 12px 0;
-      background: #060911; border-radius: 10px;
-      aspect-ratio: 16/7; overflow: hidden;
-      border: 1px solid var(--border2);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      display: flex; position: relative;
-    }
-    /* subtle corner accents */
-    #preview-wrap::before,#preview-wrap::after {
-      content:''; position:absolute; width:14px; height:14px;
-      border-style:solid; border-color:var(--gold-dim); opacity:0.5;
-    }
+    #preview-wrap { flex-shrink:0; margin:12px 12px 0; background:#060911; border-radius:10px; aspect-ratio:16/7; overflow:hidden; border:1px solid var(--border2); box-shadow:0 4px 20px rgba(0,0,0,0.4); display:flex; position:relative; }
+    #preview-wrap::before,#preview-wrap::after { content:''; position:absolute; width:14px; height:14px; border-style:solid; border-color:var(--gold-dim); opacity:0.5; }
     #preview-wrap::before { top:6px; left:6px; border-width:1.5px 0 0 1.5px; }
-    #preview-wrap::after  { bottom:6px; right:6px; border-width:0 1.5px 1.5px 0; }
-
+    #preview-wrap::after { bottom:6px; right:6px; border-width:0 1.5px 1.5px 0; }
     #preview-grid { flex:1; display:none; grid-template-columns:1fr 1px 1fr; }
-    .prev-sep { background: rgba(255,255,255,0.05); }
-    .prev-pane {
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding:10px 3%; text-align:center;
-    }
-    .prev-lang {
-      text-transform:uppercase; letter-spacing:0.1em; font-weight:700; margin-bottom:5px;
-    }
-    .prev-lang.tw { color:var(--gold); font-size:clamp(7px,1vw,10px); }
+    .prev-sep { background:rgba(255,255,255,0.05); }
+    .prev-pane { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 3%; text-align:center; }
+    .prev-lang { text-transform:uppercase; letter-spacing:0.1em; font-weight:700; margin-bottom:5px; }
     .prev-lang.en { color:var(--blue); font-size:clamp(7px,1vw,10px); }
+    .prev-lang.tw { color:var(--gold); font-size:clamp(7px,1vw,10px); }
     .prev-label { color:rgba(255,255,255,0.22); font-size:clamp(6px,0.7vw,9px); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
-    #prev-tw { color:#fff; font-family:var(--font-h); font-weight:700; font-size:clamp(9px,1.7vw,16px); line-height:1.4; white-space:pre-line; text-align:center; }
-    #prev-en { color:rgba(255,255,255,0.85); font-family:var(--font-h); font-weight:700; font-size:clamp(9px,1.7vw,16px); line-height:1.4; white-space:pre-line; text-align:center; }
-
-    #preview-empty {
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      width:100%; gap:8px; color:var(--text3);
-    }
+    #prev-en { color:#fff; font-family:var(--font-h); font-weight:700; font-size:clamp(9px,1.7vw,16px); line-height:1.4; white-space:pre-line; text-align:center; }
+    #prev-tw { color:rgba(255,255,255,0.85); font-family:var(--font-h); font-weight:700; font-size:clamp(9px,1.7vw,16px); line-height:1.4; white-space:pre-line; text-align:center; }
+    #preview-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; gap:8px; color:var(--text3); }
     #preview-empty .icon { font-size:28px; opacity:0.35; }
     #preview-empty p { font-size:13px; }
 
-    /* Controls bar */
-    #controls {
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px 6px; flex-shrink:0;
-    }
+    #controls { display:flex; align-items:center; gap:10px; padding:10px 12px 6px; flex-shrink:0; }
     #hymn-info { flex:1; min-width:0; }
     #hymn-info h2 { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    #hymn-info p  { font-size:11px; color:var(--text2); margin-top:1px; }
+    #hymn-info p { font-size:11px; color:var(--text2); margin-top:1px; }
     .pos-badge { font-size:12px; font-weight:600; color:var(--text2); background:var(--surface2); padding:4px 10px; border-radius:20px; border:1px solid var(--border); white-space:nowrap; }
-
-    .nav-btn {
-      padding:9px 20px; border-radius:var(--r);
-      font-size:14px; font-weight:600; font-family:var(--font-b);
-      cursor:pointer; border:none; white-space:nowrap; transition:all 0.15s;
-    }
+    .nav-btn { padding:9px 20px; border-radius:var(--r); font-size:14px; font-weight:600; font-family:var(--font-b); cursor:pointer; border:none; white-space:nowrap; transition:all 0.15s; }
     .nav-btn:disabled { opacity:0.2; cursor:default; }
     #btn-prev { background:var(--surface2); border:1px solid var(--border2); color:var(--text); padding:9px 18px; }
     #btn-prev:not(:disabled):hover { background:var(--border2); }
     #btn-next { background:var(--blue); color:#fff; padding:9px 24px; box-shadow:0 2px 10px rgba(74,127,212,0.3); }
     #btn-next:not(:disabled):hover { background:#5a8fe4; }
 
-    /* Action row */
-    #action-row {
-      display:flex; align-items:center; gap:8px;
-      padding:4px 12px 8px; flex-shrink:0;
-    }
-    .font-btn {
-      padding:4px 10px; border:1px solid var(--border2); border-radius:6px;
-      background:var(--surface2); color:var(--text2); cursor:pointer;
-      font-size:13px; font-family:var(--font-b); transition:all 0.1s;
-    }
+    #action-row { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; flex-shrink:0; }
+    .font-btn { padding:4px 10px; border:1px solid var(--border2); border-radius:6px; background:var(--surface2); color:var(--text2); cursor:pointer; font-size:13px; font-family:var(--font-b); transition:all 0.1s; }
     .font-btn:hover { background:var(--border2); color:var(--text); }
     #fs-val { font-size:12px; font-weight:600; min-width:24px; text-align:center; color:var(--text2); }
     #gap { flex:1; }
-
-    #present-btn {
-      padding:10px 26px; border-radius:var(--r);
-      font-size:14px; font-weight:700; font-family:var(--font-b);
-      cursor:pointer; border:none;
-      background:var(--gold); color:#0e1117;
-      box-shadow:0 2px 14px rgba(226,185,106,0.3);
-      display:flex; align-items:center; gap:7px;
-      transition:all 0.15s;
-    }
+    #present-btn { padding:10px 26px; border-radius:var(--r); font-size:14px; font-weight:700; font-family:var(--font-b); cursor:pointer; border:none; background:var(--gold); color:#0e1117; box-shadow:0 2px 14px rgba(226,185,106,0.3); display:flex; align-items:center; gap:7px; transition:all 0.15s; }
     #present-btn:not(:disabled):hover { background:#ecc97a; transform:translateY(-1px); }
     #present-btn:disabled { opacity:0.3; cursor:default; transform:none; box-shadow:none; }
     #present-btn.active { background:var(--red); color:#fff; box-shadow:0 2px 14px rgba(224,85,85,0.35); }
     #present-btn.active:hover { background:#e86868; }
 
-    /* Verse strip */
     #strip-wrap { flex:1; overflow-y:auto; padding:0 12px 12px; display:flex; flex-direction:column; gap:5px; }
     #strip-label { font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.08em; padding:4px 0 2px; flex-shrink:0; }
-    .v-thumb {
-      background:var(--surface); border:1.5px solid var(--border);
-      border-radius:var(--r); padding:9px 12px; cursor:pointer; flex-shrink:0;
-      display:grid; grid-template-columns:56px 1fr 1fr; gap:0 10px; align-items:start;
-      transition:all 0.1s;
-    }
+    .v-thumb { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--r); padding:9px 12px; cursor:pointer; flex-shrink:0; display:grid; grid-template-columns:56px 1fr 1fr; gap:0 10px; align-items:start; transition:all 0.1s; }
     .v-thumb:hover { background:var(--surface2); border-color:var(--border2); }
-    .v-thumb.cur  { border-color:var(--blue); background:rgba(74,127,212,0.08); }
+    .v-thumb.cur { border-color:var(--blue); background:rgba(74,127,212,0.08); }
     .v-thumb.live { border-color:var(--gold); background:rgba(226,185,106,0.06); }
     .vt-lbl { font-size:10px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:0.06em; padding-top:1px; }
     .v-thumb.live .vt-lbl { color:var(--gold); }
-    .vt-tw  { font-size:11px; font-weight:600; color:var(--text); line-height:1.5; white-space:pre-line; }
-    .vt-en  { font-size:11px; font-weight:600; color:var(--text); line-height:1.5; white-space:pre-line; }
+    .vt-en { font-size:11px; font-weight:600; color:var(--text); line-height:1.5; white-space:pre-line; }
+    .vt-tw { font-size:11px; font-weight:600; color:var(--text); line-height:1.5; white-space:pre-line; }
     .air-tag { font-size:9px; font-weight:700; background:var(--gold); color:#0e1117; padding:1px 5px; border-radius:6px; margin-left:4px; }
 
-    /* ════════════════════════════════
-       FULLSCREEN PRESENTATION VIEW
-       (overlays the whole page)
-    ════════════════════════════════ */
-    #pres-view {
-      display:none; position:fixed; inset:0; z-index:9999;
-      background:#060911;
-      flex-direction:column;
-    }
+    #pres-view { display:none; position:fixed; inset:0; z-index:9999; background:#060911; flex-direction:column; }
     #pres-view.show { display:flex; }
-
-    #pres-topbar {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px 20px; flex-shrink:0;
-      border-bottom:1px solid rgba(255,255,255,0.05);
-    }
+    #pres-topbar { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; flex-shrink:0; border-bottom:1px solid rgba(255,255,255,0.05); }
     #pres-meta { color:rgba(255,255,255,0.3); font-size:12px; }
     #pres-count { color:rgba(255,255,255,0.25); font-size:12px; }
-    #pres-stop {
-      font-size:12px; font-weight:600; font-family:var(--font-b);
-      color:rgba(255,255,255,0.35); background:none;
-      border:1px solid rgba(255,255,255,0.12); border-radius:6px;
-      padding:5px 13px; cursor:pointer; transition:all 0.15s;
-    }
+    #pres-stop { font-size:12px; font-weight:600; font-family:var(--font-b); color:rgba(255,255,255,0.35); background:none; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:5px 13px; cursor:pointer; transition:all 0.15s; }
     #pres-stop:hover { color:#fff; border-color:rgba(255,255,255,0.3); }
-
-    #pres-stage {
-      flex:1; display:grid; grid-template-columns:1fr 1px 1fr; overflow:hidden;
-    }
+    #pres-stage { flex:1; display:grid; grid-template-columns:1fr 1px 1fr; overflow:hidden; }
     .pres-sep { background:rgba(255,255,255,0.05); }
-    .pres-pane {
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding:40px 6vw; text-align:center;
-    }
-    .pres-lang {
-      letter-spacing:0.13em; text-transform:uppercase;
-      font-weight:700; margin-bottom:20px;
-    }
-    #pres-lang-tw { color:var(--gold); }
+    .pres-pane { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 6vw; text-align:center; }
+    .pres-lang { letter-spacing:0.13em; text-transform:uppercase; font-weight:700; margin-bottom:20px; }
     #pres-lang-en { color:var(--blue); }
+    #pres-lang-tw { color:var(--gold); }
     .pres-label { color:rgba(255,255,255,0.2); letter-spacing:0.07em; text-transform:uppercase; margin-bottom:14px; }
+    #pres-en { color:#fff; font-family:var(--font-h); font-weight:700; line-height:1.5; white-space:pre-line; text-align:center; }
     #pres-tw { color:#fff; font-family:var(--font-h); font-weight:700; line-height:1.5; white-space:pre-line; text-align:center; }
-    #pres-en { color:rgba(255,255,255,0.78); font-family:var(--font-h); font-weight:700; line-height:1.5; white-space:pre-line; text-align:center; }
-
-    #pres-nav {
-      display:flex; align-items:center; justify-content:center;
-      gap:12px; padding:14px; flex-shrink:0;
-      border-top:1px solid rgba(255,255,255,0.05);
-    }
-    .pnav {
-      padding:10px 32px; border-radius:var(--r);
-      font-size:14px; font-weight:700; font-family:var(--font-b);
-      cursor:pointer; border:none; transition:all 0.15s;
-    }
+    #pres-nav { display:flex; align-items:center; justify-content:center; gap:12px; padding:14px; flex-shrink:0; border-top:1px solid rgba(255,255,255,0.05); }
+    .pnav { padding:10px 32px; border-radius:var(--r); font-size:14px; font-weight:700; font-family:var(--font-b); cursor:pointer; border:none; transition:all 0.15s; }
     .pnav:disabled { opacity:0.18; cursor:default; }
     #pnav-prev { background:rgba(255,255,255,0.07); color:#fff; border:1px solid rgba(255,255,255,0.12); }
     #pnav-prev:not(:disabled):hover { background:rgba(255,255,255,0.13); }
@@ -301,9 +129,6 @@
     #pnav-next:not(:disabled):hover { background:#ecc97a; }
     #pres-pos { color:rgba(255,255,255,0.25); font-size:13px; font-weight:600; min-width:60px; text-align:center; }
 
-    /* ════════════════════════════════
-       MODAL
-    ════════════════════════════════ */
     .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; }
     .modal-bg.show { display:flex; }
     .modal-box { background:var(--surface2); border:1px solid var(--border2); border-radius:12px; padding:26px; width:620px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 16px 48px rgba(0,0,0,0.5); }
@@ -334,7 +159,6 @@
 </head>
 <body>
 
-<!-- ══ FULLSCREEN PRESENTATION OVERLAY ══ -->
 <div id="pres-view">
   <div id="pres-topbar">
     <div id="pres-meta"></div>
@@ -342,17 +166,17 @@
     <button id="pres-stop" onclick="stopPresenting()">✕ Stop Presenting (Esc)</button>
   </div>
   <div id="pres-stage">
-  <div class="pres-pane">
-  <div class="pres-lang" id="pres-lang-en">English</div>
-  <div class="pres-label" id="pres-lbl-en" style="font-size:clamp(10px,1vw,14px)"></div>
-  <div id="pres-en"></div>
-  </div>
-  <div class="pres-sep"></div>
-  <div class="pres-pane">
-  <div class="pres-lang" id="pres-lang-tw">Twi</div>
-  <div class="pres-label" id="pres-lbl-tw" style="font-size:clamp(10px,1vw,14px)"></div>
-  <div id="pres-tw"></div>
-  </div>
+    <div class="pres-pane">
+      <div class="pres-lang" id="pres-lang-en">English</div>
+      <div class="pres-label" id="pres-lbl-en" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="pres-en"></div>
+    </div>
+    <div class="pres-sep"></div>
+    <div class="pres-pane">
+      <div class="pres-lang" id="pres-lang-tw">Twi</div>
+      <div class="pres-label" id="pres-lbl-tw" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="pres-tw"></div>
+    </div>
   </div>
   <div id="pres-nav">
     <button class="pnav" id="pnav-prev" onclick="go(-1)">← Prev</button>
@@ -361,7 +185,6 @@
   </div>
 </div>
 
-<!-- ══ HYMN MODAL ══ -->
 <div class="modal-bg" id="modal-bg" onclick="closeMBg(event)">
   <div class="modal-box">
     <h2 id="modal-title">Add New Hymn</h2>
@@ -384,7 +207,6 @@
   </div>
 </div>
 
-<!-- ══ HEADER ══ -->
 <div id="header">
   <div class="brand">
     <div class="brand-icon">✝</div>
@@ -399,10 +221,7 @@
   </div>
 </div>
 
-<!-- ══ APP ══ -->
 <div id="app">
-
-  <!-- Sidebar -->
   <div id="sidebar">
     <div class="search-box">
       <input type="text" id="search" placeholder="Search hymns..." oninput="filter(this.value)"/>
@@ -415,10 +234,7 @@
     </div>
   </div>
 
-  <!-- Presenter -->
   <div id="presenter">
-
-    <!-- Preview -->
     <div id="preview-wrap">
       <div id="preview-grid">
         <div class="prev-pane">
@@ -439,7 +255,6 @@
       </div>
     </div>
 
-    <!-- Controls -->
     <div id="controls">
       <div id="hymn-info">
         <h2 id="info-tw">No hymn selected</h2>
@@ -450,7 +265,6 @@
       <button class="nav-btn" id="btn-next" onclick="go(1)" disabled>Next →</button>
     </div>
 
-    <!-- Actions -->
     <div id="action-row">
       <span style="font-size:12px;color:var(--text3)">Font:</span>
       <button class="font-btn" onclick="chFont(-2)">A−</button>
@@ -460,49 +274,871 @@
       <button id="present-btn" onclick="togglePresent()" disabled>▶ Present</button>
     </div>
 
-    <!-- Verse strip -->
     <div id="strip-wrap">
       <div id="strip-label">All Verses — click any to jump</div>
       <div id="verse-strip"></div>
     </div>
-
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-// DEFAULT HYMNS
-// ═══════════════════════════════════════════════
 const HYMNS_KEY = 'church_hymns_v5';
-const DEFAULTS = [
-  { num:1, tw:"Onyame Ayɛ Yiye", en:"God Has Been Good", verses:[
-    { label:"Verse 1", tw:"Onyame ayɛ yiye,\nOyɛ Nyankopɔn kɛse,\nN'adom na ɛhyɛ yɛn ma,\nDaa daa n'ayɛ yiye.", en:"God has been good to us,\nHe is the Almighty God,\nHis grace fills us always,\nForever He is good." },
-    { label:"Chorus", tw:"Ayeyi, ayeyi, ayeyi,\nYɛma Onyame ayeyi,\nN'ani so na yɛwɔ,\nYɛma no ayeyi.", en:"Praise, praise, praise,\nWe give God our praise,\nIn His sight we stand,\nWe give Him praise." },
-    { label:"Verse 2", tw:"Wahyira yɛn ho,\nWama yɛn ahotɔ,\nN'akoma mu na yɛtena,\nDaa daa n'ayɛ yiye.", en:"He has blessed our lives,\nHe has given us peace,\nIn His heart we dwell,\nForever He is good." }
-  ]},
-  { num:2, tw:"Yesu Dɔ Me", en:"Jesus Loves Me", verses:[
-    { label:"Verse 1", tw:"Yesu dɔ me, me nim saa,\nWɔkyerɛ me Kronkron Nhoma mu,\nMe ntɔkwa ne me hunu,\nOno na ɔwɔ me tumi.", en:"Jesus loves me, this I know,\nFor the Bible tells me so,\nLittle ones to Him belong,\nThey are weak but He is strong." },
-    { label:"Chorus", tw:"Yiw, Yesu dɔ me,\nYiw, Yesu dɔ me,\nYiw, Yesu dɔ me,\nWɔkyerɛ me Nhoma mu.", en:"Yes, Jesus loves me,\nYes, Jesus loves me,\nYes, Jesus loves me,\nThe Bible tells me so." },
-    { label:"Verse 2", tw:"Yesu dɔ me, ɔkɔe,\nWafiri soro ba ha,\nOsii ase ma me ho,\nMa mentra n'akyiri.", en:"Jesus loves me, He who died,\nHeaven's gate to open wide,\nHe will wash away my sin,\nLet His little child come in." }
-  ]},
-  { num:3, tw:"Onyankopɔn Adom", en:"Amazing Grace", verses:[
-    { label:"Verse 1", tw:"Onyankopɔn adom a ɛyɛ dɛ,\nWanya me a obiara tew,\nMe saa da bi na mereyera,\nNa ɛna me huu ɔkwan.", en:"Amazing grace, how sweet the sound,\nThat saved a wretch like me,\nI once was lost but now am found,\nWas blind but now I see." },
-    { label:"Verse 2", tw:"Adom na ɛsraa me akoma,\nMa menya gyidi,\nAdom bɛma me nkwa nyinaa,\nN'adom ma ɔkwan.", en:"'Twas grace that taught my heart to fear,\nAnd grace my fears relieved,\nHow precious did that grace appear,\nThe hour I first believed." },
-    { label:"Verse 3", tw:"Bere a me nkwa abɛwiei,\nNa maakɔ soro,\nMɛto dwom ɔkwan no nyinaa,\nNa meda Onyame ase.", en:"When we've been there ten thousand years,\nBright shining as the sun,\nWe've no less days to sing God's praise,\nThan when we first begun." }
-  ]},
-  { num:4, tw:"Medi Onyame Akyi", en:"I Will Follow God", verses:[
-    { label:"Verse 1", tw:"Medi Onyame akyi daa,\nMɛnyɛ n'apɛde nyinaa,\nN'abodwese mu na medi,\nDaa daa medi akyi.", en:"I will follow God always,\nI will do His will each day,\nIn His wisdom I will walk,\nForever I will follow." },
-    { label:"Chorus", tw:"Medi akyi, medi akyi,\nMedi Onyame akyi,\nM'akoma nyinaa mu,\nMedi no akyi.", en:"I will follow, I will follow,\nI will follow God above,\nWith all my heart within me,\nI will follow Him." }
-  ]},
-  { num:5, tw:"Yɛn Ara Yɛn Asaase Ni", en:"This Land Is Ours", verses:[
-    { label:"Verse 1", tw:"Yɛn ara yɛn asaase ni,\nEyi nye eyinom ara,\nMohyɛ mo nsa so oo,\nNa mommɔ mo ho ban.", en:"This land is ours, our very own,\nThese are our people here,\nHold fast with your hands,\nAnd guard it well." },
-    { label:"Verse 2", tw:"Onyame na ɔhyɛɛ yɛn ma,\nEyi nye eyinom ara,\nYɛda n'ase daa daa,\nYɛma no ayeyi.", en:"God granted this to us,\nThese are our blessings here,\nWe thank Him always,\nWe give Him praise." }
-  ]}
+
+// ═══════════════════════════════════════════════════════════
+// ALL 50 HYMNS from Kristofo Nnwom (Twi) + English Hymnal
+// ═══════════════════════════════════════════════════════════
+const BUILTIN_HYMNS = [
+  {
+    num: "1A", tw: "Yɛne Nyame Nante", en: "Trust and Obey",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yɛne Nyame nante,\nWo n'asɛm no han mu a,\nAnuonyam bia ohwie gu yɛn kwan mu.\nSɛ yɛ yɛ ne pɛ de a,\nOne yɛ te ho daa,\nNe obiara ogyedi na otie.",
+        en: "When we walk with the Lord,\nIn the light of His word,\nWhat a glory He sheds on our way!\nWhile we do His good will,\nHe abides with us still,\nAnd with all who will trust and obey." },
+      { label: "Chorus",
+        tw: "Gyidi na tie,\nOkwan biara nni hɔ a,\nYenya Iesu mu ahoto,\nGyesɛ w'gyidi na w'tie.",
+        en: "Trust and obey,\nFor there's no other way,\nTo be happy in Jesus,\nBut to trust and obey." }
+    ]
+  },
+  {
+    num: "1B", tw: "Gye Me Bra, Me Wura Na Ma", en: "Take My Life and Let It Be",
+    verses: [
+      { label: "Verse 1",
+        tw: "Gye me bra, me Wura, na ma,\nMemfa nhyɛ wonsa koraa,\nGye me mmɛrɛ ne mennafua,\nNa memfa nyi wo ayɛ daa.",
+        en: "Take my life and let it be,\nConsecrated, Lord, to Thee;\nTake my moments and my days,\nLet them flow in ceaseless praise." },
+      { label: "Verse 2",
+        tw: "Gye me pɛ, fa yɛ wo de,\nErenyɛ me daa ara bio.\nGye me koma, Wo dea ampa,\nMeyɛ Wo nko, Wo dea daa.",
+        en: "Take my will and make it Thine,\nIt shall be no longer mine;\nTake my heart, it is Thine own,\nIt shall be Thy royal throne." },
+      { label: "Verse 3",
+        tw: "Gye me dɔ, m'Awurade,\nMehwie gu Wo nan ase.\nGye me ne m'ade nyinaa,\nMeyɛ Wo nko, Wo dea daa.",
+        en: "Take my love, my Lord, I pour,\nAt Thy feet its treasure store;\nTake myself and I will be,\nEver, only, all for Thee." }
+    ]
+  },
+  {
+    num: 2, tw: "Ahotoso Pa, Manya Yesu", en: "Blessed Assurance",
+    verses: [
+      { label: "Verse 1",
+        tw: "Ahotoso pa, manya Yesu,\nO! dɛn anuonyam na meka hwɛ!\nNyame ato me, nkwagye-difoo;\nHonhom awo me, woadware me.",
+        en: "Blessed assurance, Jesus is mine!\nO what a foretaste of glory divine!\nHeir of salvation, purchase of God,\nBorn of His Spirit, washed in His blood." },
+      { label: "Chorus",
+        tw: "M'asɛm, ɛne sɛ, me nnwom ne sɛ:\nDaa nyinaa meyi M'agyenkwa, ayɛ.",
+        en: "This is my story, this is my song,\nPraising my Saviour all the day long." },
+      { label: "Verse 2",
+        tw: "Ahobrɛasɛɛ kronn, Anigyeɛ Kronn,\nAhosɛpɛ pue m'ani so hauu;\nAbofoo sian fi soro bɛka,\nAhoummobo ne dɔ hu asɛm.",
+        en: "Perfect submission, perfect delight,\nVisions of rapture now burst on my sight;\nAngels descending bring from above,\nEchoes of mercy, whispers of love." },
+      { label: "Verse 3",
+        tw: "Ahobrɛasɛɛ Kronn, ne nyinaa adwo,\nMedi dɛ nya nhyira, M'agyenkwa mu,\nMerewɛa, retwɛn, m'ani tua soro,\nMete Ne dɔ mu, N'adoɛ mɔɛ me.",
+        en: "Perfect submission, all is at rest,\nI in my Saviour am happy and blest;\nWatching and waiting, looking above,\nFilled with His goodness, lost in His love." }
+    ]
+  },
+  {
+    num: 3, tw: "Mete Wo Nne Dɛdɛ A", en: "I Am Coming, Lord",
+    verses: [
+      { label: "Verse 1",
+        tw: "Mete wo nne dɛdɛ a,\nɛfrɛ me, Awurade,\nSɛ mennware mogya no a,\nWɔhwiee wɔ Kalvary.",
+        en: "I am coming to the cross,\nI am poor, and weak, and blind;\nI am counting all but dross,\nI shall full salvation find." },
+      { label: "Chorus",
+        tw: "Awurade, meba!\nMeba Wo nkyɛn nnɛ;\nTɛ me ho mogyano mu,\nWɔhwiee Wɔ Kalvary.",
+        en: "I am trusting, Lord, in Thee,\nBlessèd Lamb of Calvary;\nHumbly at Thy cross I bow,\nSave me, Jesus, save me now." },
+      { label: "Verse 2",
+        tw: "Sɛ meba mmɛrɛ mu a,\nWoara Wohyɛ me den.\nSɛ mede ne ho bone baa,\nWote me ho koraa.",
+        en: "Long my heart has sighed for Thee,\nLong has evil reigned within;\nJesus sweetly speaks to me,\n'I will cleanse you from all sin.'" },
+      { label: "Verse 3",
+        tw: "Yesu na Ofrɛ me,\nDe gyidie, asomdwoe,\nAnidasuo, dɔ si m'anim,\nWo ha ne Ɛsoro.",
+        en: "Here I give my all to Thee,\nFriends and time and earthly store;\nSoul and body Thine to be,\nWholly Thine for evermore." }
+    ]
+  },
+  {
+    num: 4, tw: "Yɔnko Bɛn N'Ɔte Sɛ Yesu", en: "What a Friend We Have in Jesus",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yɔnko bɛn n'ɔte sɛ Yesu,\nƆasoa yɛn bɔne ne yea;\nɛyɛ sɛ yede ade nyinaa,\nKo Nyame hɔ mpaebɔm!\nAo! yɛtaa sɛe asomdwoe kwa:\nAo! yɛde yea a ɛnhia,\nɛfisɛ yɛmfa ade nyinna,\nNnko Nyame ho mpaebom.",
+        en: "What a friend we have in Jesus,\nAll our sins and griefs to bear!\nWhat a privilege to carry,\nEverything to God in prayer!\nO what peace we often forfeit,\nO what needless pain we bear,\nAll because we do not carry,\nEverything to God in prayer." },
+      { label: "Verse 2",
+        tw: "Sɔ yɛ wɔ nnyigyeɛ ne sɔhwɛ,\nƆhaw bi wɔ ho ana?\nYɛrempa aba ara da:\nFa kɔ Nyame hɔ mpaebom;\nYɛwɔ yɔnko nokwafoo bi a,\nƆbɛgyam yɛn yɛa mu:\nJesu nim yɛn mmɛrɛyɛ nyinaa,\nFa ko Nyame ho mpaebom!",
+        en: "Have we trials and temptations?\nIs there trouble anywhere?\nWe should never be discouraged,\nTake it to the Lord in prayer.\nCan we find a friend so faithful,\nWho will all our sorrows share?\nJesus knows our every weakness,\nTake it to the Lord in prayer." },
+      { label: "Verse 3",
+        tw: "Yɛ-ayɛ mmɛrɛ na yɛn kɔn abu!\nDadwen ne haw gu yɛn so?\nAgyɛnkwa ne yɛn guankɔbea,\nFakɔ Nyame hɔ mpaɛbom!\nNe nsam bɛyɛ kokyɛm amaw'\nWɔ benya abo toyam'.",
+        en: "Are we weak and heavy laden,\nCumbered with a load of care?\nPrecious Saviour, still our refuge,\nTake it to the Lord in prayer.\nDo thy friends despise, forsake thee?\nTake it to the Lord in prayer;\nIn His arms He'll take and shield thee,\nThou wilt find a solace there." }
+    ]
+  },
+  {
+    num: 5, tw: "Monsɔre Nnyina Mma Jesu", en: "Stand Up, Stand Up for Jesus",
+    verses: [
+      { label: "Verse 1",
+        tw: "Monsɔre nnyinaa mma Iesu,\nAsɛnnua hɔ nsraafoo,\nMomma ne frankaa no so,\nɛnsɛ sɛ ɛyera:\nFi nim mu hɔ nkonim mu,\nMe-di me dɔm anim,\nKosi sɛ tamfu agu,\nNa Kristo ne wura.",
+        en: "Stand up, stand up for Jesus,\nYe soldiers of the cross;\nLift high His royal banner,\nIt must not suffer loss.\nFrom victory unto victory,\nHis army shall He lead,\nTill every foe is vanquished,\nAnd Christ is Lord indeed." },
+      { label: "Verse 2",
+        tw: "Monsɔre nnyina mma Iesu,\nMunnyina N'ahoɔden mu,\nHonam bɛdi mu huanmɔ,\nMonntwere mo ankasa,\nMonhyɛ Kristo akodɛ,\nMonwɛn Wɔ mpaɛbɔm':\nƆsom mu o, amane mu o,\nMonnan moakyi nnkyerɛ da.",
+        en: "Stand up, stand up for Jesus,\nStand in His strength alone;\nThe arm of flesh will fail you,\nYe dare not trust your own.\nPut on the gospel armour,\nEach piece put on with prayer;\nWhere duty calls or danger,\nBe never wanting there." },
+      { label: "Verse 3",
+        tw: "Monsɔre nnyina mma Iesu,\nƆko no renkye pii,\nɛnnɛ Ɔko gyegyeegye.\nƆkyena nkonim dwom,\nNea obedi nkonim nɔ,\nBenya nkwa abotire.\nNea one nuonyam Rene no,\nBedi hene daa daa.",
+        en: "Stand up, stand up for Jesus,\nThe strife will not be long;\nThis day the noise of battle,\nThe next the victor's song.\nTo him that overcometh,\nA crown of life shall be;\nHe with the King of Glory,\nShall reign eternally." }
+    ]
+  },
+  {
+    num: 6, tw: "Tete Bo A Wɔpae Maa Me", en: "Rock of Ages",
+    verses: [
+      { label: "Verse 1",
+        tw: "Tete Bo a wɔpae maa me;\nMa menguan nhunta Wo mu,\nMa asuo ne mogya no a,\nEfi Wo mfɛm resen no,\nɛnyɛ bone ho aduro,\nɛmpa memfom nsan me ho.",
+        en: "Rock of Ages, cleft for me,\nLet me hide myself in Thee;\nLet the water and the blood,\nFrom Thy wounded side which flowed,\nBe of sin the double cure,\nSave from wrath and make me pure." },
+      { label: "Verse 2",
+        tw: "Sɛ me nisuo sɛn daa po,\nNa me mmodɛn ngo da pɔ,\nEntumi bɔne ka tua;\nGyefoo ne Wo ara nko,\nMe nsam nni akatua bi,\nMekuta W'asɛnnua mu.",
+        en: "Not the labour of my hands,\nCan fulfil Thy law's demands;\nCould my zeal no respite know,\nCould my tears for ever flow,\nAll for sin could not atone,\nThou must save, and Thou alone." },
+      { label: "Verse 3",
+        tw: "Megu ahometia yi,\nMeka m'ani gu so a,\nMesɔre ba noho a,\nBehu Wo W'ahɛnnwa sɔ a,\nTete Bo a wɔpae maa me,\nMa menguan nhunta Wo mu.",
+        en: "While I draw this fleeting breath,\nWhen mine eyes shall close in death,\nWhen I soar to worlds unknown,\nSee Thee on Thy judgement throne,\nRock of Ages, cleft for me,\nLet me hide myself in Thee." }
+    ]
+  },
+  {
+    num: 7, tw: "Me Gyedie Tim Wo So", en: "My Faith Looks Up to Thee",
+    verses: [
+      { label: "Verse 1",
+        tw: "Me gyedie tim Wo so.\nO! Kalvary Adwamma,\nGyefoo Kronkron,\nTie mpae a mebo yi,\nYi me ho bone nyinaa,\nNa efi nne menyɛ,\nWo de koraa.",
+        en: "My faith looks up to Thee,\nThou Lamb of Calvary,\nSaviour divine!\nNow hear me while I pray,\nTake all my guilt away,\nO let me from this day\nBe wholly Thine!" },
+      { label: "Verse 2",
+        tw: "Ma Wo dom Kɛseɛ no,\nNhyɛ me koma den,\nNa menye nnam;\nSɛ wo wui maa me no,\nAo! ma me nso ɔdɔ,\nNnɛ dɛn-nan mma Wo,\nNa moand a.",
+        en: "May Thy rich grace impart,\nStrength to my fainting heart,\nMy zeal inspire;\nAs Thou hast died for me,\nO may my love to Thee,\nPure, warm and changeless be,\nA living fire!" },
+      { label: "Verse 3",
+        tw: "Menam bra sum mu yi,\nYea atwa me hɔ yi,\nKyerɛ me kwan,\nMa sum nnan adekyee,\nNa popa me nnusuo,\nNa mma menyera,\nMfiri Wo nkyɛn.",
+        en: "While life's dark maze I tread,\nAnd griefs around me spread,\nBe Thou my guide;\nBid darkness turn to day,\nWipe sorrow's tears away,\nNor let me ever stray\nFrom Thee aside." },
+      { label: "Verse 4",
+        tw: "Sɛ ɔbra yi twa mu,\nNa owuo asuten,\nBeworo me so a,\nM'Agyenkwa Dɛɛfoo pa,\nYime suro nɛ akyinnye,\nFame kra a Woagye nɔn!\nKo soro fie sonn.",
+        en: "When ends life's transient dream,\nWhen death's cold, sullen stream\nShall o'er me roll;\nBlest Saviour, then in love,\nFear and distrust remove,\nO bear me safe above,\nA ransomed soul!" }
+    ]
+  },
+  {
+    num: 8, tw: "Bura Bi Wɔ Hɔ Mogya Ma", en: "There Is a Fountain",
+    verses: [
+      { label: "Verse 1",
+        tw: "Bura bi wɔ hɔ mogya ma,\nWɔhuee Immanuel mfɛm,\nNa nneboneyefoo to imu a,\nWon afodie yera.",
+        en: "There is a fountain filled with blood,\nDrawn from Emmanuel's veins;\nAnd sinners plunged beneath that flood,\nLose all their guilty stains." },
+      { label: "Verse 2",
+        tw: "Wo mogya tumi rempa da,\nNyankopɔn Adwamma,\nGye sɛ Wo mma nyinaa nya nkwa,\nNa wonyɛ bone bio.",
+        en: "The dying thief rejoiced to see,\nThat fountain in his day;\nAnd there have I, though vile as he,\nWashed all my sins away." },
+      { label: "Verse 3",
+        tw: "Efi sɛ mede gyidie huu,\nMogya a efi Wo mfɛm,\nOnyame dɔ ayɛ dwom,\nɛbeyɛ ako wum.",
+        en: "E'er since by faith I saw the stream,\nThy flowing wounds supply,\nRedeeming love has been my theme,\nAnd shall be till I die." }
+    ]
+  },
+  {
+    num: 9, tw: "Oman Bi Wɔ Hɔ Ehyerɛn Sen Wi", en: "There's a Land That Is Fairer Than Day",
+    verses: [
+      { label: "Verse 1",
+        tw: "Oman bi wɔ hɔ Ehyerɛn sen wi,\nYɛde gyedie hu wɔ akyiri,\nNa Agya retwen wɔ kwan so,\nAiesie tɛnabea ama yɛn hɔ.",
+        en: "There's a land that is fairer than day,\nAnd by faith we can see it afar;\nFor the Father waits over the way,\nTo prepare us a dwelling place there." },
+      { label: "Chorus",
+        tw: "Daakye Bi... Anigyeɛm,\nYɛbɛhyia wɔ mpoano fɛfɛ hɔ;\nDaakye bi... Anigyeɛm,\nYɛbɛhyia wɔ mpoano fɛfɛ hɔ.",
+        en: "In the sweet by and by,\nWe shall meet on that beautiful shore;\nIn the sweet by and by,\nWe shall meet on that beautiful shore." },
+      { label: "Verse 2",
+        tw: "Yɛbɛto wɔ mpoano fɛfɛ hɔ,\nNhyirafoo nnwom a ɛyɛ dɛ no,\nYɛn honhom renni yea ara da,\nYɛnsi apini yɛn home mu.",
+        en: "We shall sing on that beautiful shore,\nThe melodious songs of the blest;\nAnd our spirits shall sorrow no more,\nNot a sigh for the blessing of rest." },
+      { label: "Verse 3",
+        tw: "Yɛn Soro Agya Ɔdɛɛfoo no,\nYɛde yɛn ayɛyie bɛma no,\nWo nhyira a Ɔde dom yɛn ha,\nNe Ne dɔ akyɛdɛɛ fafɛ nti.",
+        en: "To our bountiful Father above,\nWe will offer our tribute of praise,\nFor the glorious gift of His love,\nAnd the blessings that hallow our days." }
+    ]
+  },
+  {
+    num: 10, tw: "Sɛ Medwɛn Asɛnnua Nwanwa A", en: "When I Survey the Wondrous Cross",
+    verses: [
+      { label: "Verse 1",
+        tw: "Sɛ medwɛn Asɛnnua nwanwa a,\nNuonyam Hene wuu so no hɔ a,\nMɛmmu m'adepa biara hwɛɛ,\nNa m'ahomaso yɛ me tan.",
+        en: "When I survey the wondrous cross,\nOn which the Prince of glory died,\nMy richest gain I count but loss,\nAnd pour contempt on all my pride." },
+      { label: "Verse 2",
+        tw: "Awurade, mma m'annhoran,\nGye sɛ Kristo me Nyame wum,\nNnɛɛma hunu a medɔ no,\nMede bo afodɛɛ Ne mogya.",
+        en: "Forbid it, Lord, that I should boast,\nSave in the death of Christ my God!\nAll the vain things that charm me most,\nI sacrifice them to His blood." },
+      { label: "Verse 3",
+        tw: "Hwɛ sɛ yea ne ɔdɔ rɛsɛn,\nNe ti, Ne nsa, Ne ne nan hɔ,\nSɛɛ dɔ ne yea yi mmɔ mu pɛn.\nNa nsɔɛ kyɛ yi wonsoaa bi da.",
+        en: "See from His head, His hands, His feet,\nSorrow and love flow mingled down!\nDid e'er such love and sorrow meet,\nOr thorns compose so rich a crown?" },
+      { label: "Verse 4",
+        tw: "Wiase nyinaa yɛ me de pɔ a,\nAnka ɛyɛ akyɛdɛɛ a ɛsua,\nAnwanwa dɔ Nyame dɔ yi,\nGye kra, n'kwa, ade nyinaa.",
+        en: "Were the whole realm of nature mine,\nThat were a present far too small;\nLove so amazing, so divine,\nDemands my soul, my life, my all." }
+    ]
+  },
+  {
+    num: 11, tw: "Kristo Asraafoo", en: "Onward, Christian Soldiers",
+    verses: [
+      { label: "Verse 1",
+        tw: "Kristofoo Asraafoo,\nMonnuom Akonɔ,\nYesu asɛnnua no,\nDi yɛn anim kan,\nYɛn Hene atu sa.\nRekɔ-tia tamfoo,\nMonnuom sraban nɔ so,\nMonhwɛ Ne frankaa.",
+        en: "Onward, Christian soldiers,\nMarching as to war,\nWith the cross of Jesus\nGoing on before.\nChrist, the royal Master,\nLeads against the foe;\nForward into battle,\nSee His banners go!" },
+      { label: "Chorus",
+        tw: "Kristofoo asraafoo,\nMonnuom Akono,\nYesu asɛnnua no,\nDi yɛn anim kan.",
+        en: "Onward, Christian soldiers,\nMarching as to war,\nWith the cross of Jesus\nGoing on before." },
+      { label: "Verse 2",
+        tw: "Yɛma Ne frankaa so a,\nƆbonsam dɔm gu,\nEnneɛ Kristo akofoo,\nMonkodi nkonim,\nYɛbɔ se yi ayɛ a,\nSaman fapɛm him,\nAnuanom monto nnwom.\nMommua mo nne so.",
+        en: "At the sign of triumph\nSatan's host doth flee;\nOn then, Christian soldiers,\nOn to victory!\nHell's foundations quiver\nAt the shout of praise;\nBrothers, lift your voices,\nLoud your anthems raise." },
+      { label: "Verse 3",
+        tw: "Ahɛnnwa bɛtutu,\nAhɛnnie atwam,\nYesu asɔre de.\nɛbɛtim ho daa,\nAsamanapon nɔ,\nRentumi nhyɛ so.\nYɛwɔ Kristo bɔhyɛ,\nN'asɛm Iɛtwam da.",
+        en: "Crowns and thrones may perish,\nKingdoms rise and wane,\nBut the Church of Jesus\nConstant will remain;\nGates of hell can never\n'Gainst that Church prevail;\nWe have Christ's own promise,\nAnd that cannot fail." },
+      { label: "Verse 4",
+        tw: "Me nkurɔfoo mommɛdom,\nAnigyeɛ kuo yi,\nMommura na yɛmmom nto,\nYɛn nkunim dwom yi,\nAnuonyam ne nkamfo,\nNka yɛn Hene no,\nNnipa ne abofoo,\nBɛto dwom yi daa.",
+        en: "Onward then, ye people,\nJoin our happy throng,\nBlend with ours your voices\nIn the triumph song;\nGlory, laud, and honour,\nUnto Christ the King,\nThis through countless ages\nMen and angels sing." }
+    ]
+  },
+  {
+    num: 12, tw: "Anigyeɛ Da, ɛne Da No A", en: "Happy Day",
+    verses: [
+      { label: "Verse 1",
+        tw: "Anigyeɛ da me da no a,\nMede me ho maa m'Agyɛnkwa;\nɛsɛ sɛ me koma di dɛ,\nNa ɔka ne dɛ kyerɛ aman.",
+        en: "O happy day that fixed my choice\nOn Thee, my Saviour and my God!\nWell may this glowing heart rejoice,\nAnd tell its raptures all abroad." },
+      { label: "Chorus",
+        tw: "Anigyeɛ Da; AnigyeɛDa;\nDa a Yesu horo me ho bone,\nƆkyerɛɛ me sɛ mɛnwɛn mmɔ mpae,\nNa menni dɛ berɛ nyinaa,\nAnigyeɛ Da AnigyeɛDa,\nDa a, Yesu horome ho bɔne.",
+        en: "Happy day, happy day,\nWhen Jesus washed my sins away!\nHe taught me how to watch and pray,\nAnd live rejoicing every day;\nHappy day, happy day,\nWhen Jesus washed my sins away!" },
+      { label: "Verse 2",
+        tw: "O nhyira nhyehyree; ɛso nse a,\nMedi kyerɛɛ me Dofoo ano;\nBerɛ a meba N'Asorefie,\nMomma ayeyie nnwom nhyɛ hɔ ma.",
+        en: "'Tis done, the great transaction's done,\nI am my Lord's and He is mine;\nHe drew me and I followed on,\nCharmed to confess the voice divine." },
+      { label: "Verse 3",
+        tw: "Apam kɛseɛ no yɛawie pam;\nMeyɛ 'Ne di, Ɔyɛ me de,\nƆtwetwee me, medii N'akyi,\nNe Nyame nne no yɛ me dɛ.",
+        en: "Now rest, my long-divided heart,\nFixed on this blissful centre, rest;\nNor ever from thy Lord depart,\nWith Him of every good possessed." }
+    ]
+  },
+  {
+    num: 13, tw: "Memfɛre M'Awurade Ho", en: "At the Cross",
+    verses: [
+      { label: "Verse 1",
+        tw: "Memfɛre m'Awurade ho,\nSɛ mɛko ama no.\nMɛsɔ N'asɛm no nidie mu,\nN'asɛnnua ho nuɔnyam.",
+        en: "Alas! and did my Saviour bleed,\nAnd did my Sovereign die?\nWould He devote that sacred head\nFor sinners such as I?" },
+      { label: "Chorus",
+        tw: "Asɛnnuam, Asɛnnuam, na medii kan huu hann,\nNa me koma adesoa pire firi ho,\nHɔ na mɛnam gyidie so huu adɛ.\nNa afei m'ahome ka me ho daa.",
+        en: "At the cross, at the cross where I first saw the light,\nAnd the burden of my heart rolled away,\nIt was there by faith I received my sight,\nAnd now I am happy all the day!" },
+      { label: "Verse 2",
+        tw: "Yesu, me Nyame; Menim No,\nNe din na metwerɛ;\nƆremma me kra mfirɛ da,\nNa m'adidaso mpa.",
+        en: "Was it for crimes that I had done\nHe groaned upon the tree?\nAmazing pity, grace unknown,\nAnd love beyond degree!" },
+      { label: "Verse 3",
+        tw: "N'asɛm tim hɔ sɛ Nahɛnnwa,\nƆbetumi asie.\nDɛɛ mede a hyɛ N'erisa no,\nAkodu awiei wo.",
+        en: "Well might the sun in darkness hide\nAnd shut his glories in,\nWhen Christ, the mighty Maker, died\nFor man the creature's sin." },
+      { label: "Verse 4",
+        tw: "Ɔbɛhɔ wu N'Agya anim hɔ,\nMe din a ɛnsɛ yi,\nNa Jerusalem foforo mu,\nƆama mɛ kra tenabea.",
+        en: "Thus might I hide my blushing face\nWhile His dear cross appears,\nDissolve my heart in thankfulness,\nAnd melt my eyes to tears." }
+    ]
+  },
+  {
+    num: 14, tw: "Ao Bra Ma Yɛnni Dɛ", en: "Come, Let Us Rejoice",
+    verses: [
+      { label: "Verse 1",
+        tw: "Ao bra ma yɛnni dɛ,\nSɛ ka n meyɛ hiani a,\nAfei manya Nyame ho dɔ,\nDɔ a ɛkyɛn sika.",
+        en: "Come, let us rejoice in the Lord,\nFor Jesus has made us His own;\nHis grace has redeemed us through blood,\nAnd He gives us a mansion of stone." },
+      { label: "Verse 2",
+        tw: "Ao, bra ma yɛnni dɛ,\nSɛ kan mɛtɔɔ baha a,\nAfei manya Otumfoo a,\nN'abasa wɛn me daa.",
+        en: "Come, let us rejoice in the Lord,\nFor once I was lost and undone;\nBut Jesus has sought me and found me,\nAnd now I'm His very own son." },
+      { label: "Verse 3",
+        tw: "Ao, bra ma yɛnni dɛ,\nSɛ kan mɛbɔɔ ko a,\nNyame de Ne dɔ atwɛ me,\nSɛ mɛmmra m'Agya fie.",
+        en: "Come, let us rejoice in the Lord,\nFor long I was wandering far;\nBut God in His infinite mercy,\nHas guided me home by His star." },
+      { label: "Verse 4",
+        tw: "Ao bra ma yɛnni dɛ,\nMe kra reyɛra no,\nM'Agyɛnkwa Yesu twee me fii,\nBone ne bɔnsam nsam.",
+        en: "Come, let us rejoice in the Lord,\nFor once I was bound down in sin;\nBut Jesus has broken my fetters,\nAnd given me peace within." }
+    ]
+  },
+  {
+    num: 15, tw: "Yesu Kristo Resen Ha", en: "Jesus Is Passing By",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yesu Kristo resen ha,\nBoneyeni to W'ani hwɛ,\nBerɛ pa nu retwam yi,\nKekam sɛ, Hu me mmobɔ.",
+        en: "Jesus is passing by, passing by,\nSinner, look up to Him now;\nIf thou wouldst be saved today,\nSinner, look up to Him now." },
+      { label: "Verse 2",
+        tw: "Yesu Kristo resen ha,\nSo Ɔbɛbɛn wo sɛɛ daa?\nɛnnɛ ne ɔgye-da no,\nHwehwɛ nkwa na wobenya.",
+        en: "Jesus is passing by, passing by,\nHe calls thee to come unto Him;\nHe waits to save thee today,\nSinner, come unto Him." },
+      { label: "Verse 3",
+        tw: "Ɔgyina ho rɛfrɛ wo,\nƆsɛ: Menyɛ dɛn mma wo?\nSore a wo hia sɛm kyerɛ no,\nƆrɛfrɛ wo ampa ara.",
+        en: "Jesus is passing by, passing by,\nO sinner, He calleth to thee;\nGive Him thy heart, trust Him today,\nHis love will forever set free." },
+      { label: "Verse 4",
+        tw: "Mɛpɛ sɛ n ehu W'adom,\nMe wura yi Wo dɔ kyerɛ me,\nMa ɛnhwire me kra mu,\nɛnhyɛ koma ne kra so.",
+        en: "Jesus is passing by, passing by,\nO yield to His merciful call;\nAccept His salvation today,\nAnd crown Him the Lord of all." }
+    ]
+  },
+  {
+    num: 16, tw: "Yesu Di Hene Babiara", en: "Jesus Shall Reign",
+    verses: [
+      { label: "Verse 1",
+        tw: "Babiara a owia hyerɛn no,\nɛtwa sɛ Yesu di hene,\nN'ahenie bɛtrɛ mmaa nyinaa,\nKosi sɛ owia rento bio.",
+        en: "Jesus shall reign where'er the sun\nDoes his successive journeys run;\nHis kingdom stretch from shore to shore,\nTill moons shall wax and wane no more." },
+      { label: "Verse 2",
+        tw: "Wɔbɛbɔ No mpae daa nyinaa,\nNa ayeyie ahyɛ No kyɛ,\nNe din ne afodɛɛ nyinaa,\nBɛtu sɛ duhuam akɔ soro.",
+        en: "To Him shall endless prayer be made,\nAnd praises throng to crown His head;\nHis name like sweet perfume shall rise,\nWith every morning sacrifice." },
+      { label: "Verse 3",
+        tw: "Kasa hodoo ne aman nyinaa,\nBɛto Ne dɔ ho nnwom dɛdɛ,\nMmofra nso bɛma won nne so,\nAto Hossanna am Ne din.",
+        en: "People and realms of every tongue\nDwell on His love with sweetest song;\nAnd infant voices shall proclaim\nTheir early blessings on His name." },
+      { label: "Verse 4",
+        tw: "Dɛɛ Ɔdi hene, nhyira nko ma,\nƆdoduani yɛra ne pa,\nAbrefoo nya daa ahomeka,\nNa wɔhyira ahiafoo nso.",
+        en: "Blessings abound where'er He reigns;\nThe prisoner leaps to lose his chains,\nThe weary find eternal rest,\nAnd all the sons of want are blest." },
+      { label: "Verse 5",
+        tw: "Babiara a Ɔkyerɛ Ne tumi,\nWuo ne mmusuo fi hɔ koraa,\nNe mu na Adam mma nya nkwa,\nKyɛn dɛɛ Wɔn agya yɛrae no.",
+        en: "Let every creature rise and bring\nPeculiar honours to our King;\nAngels descend with songs again,\nAnd earth repeat the loud Amen!" }
+    ]
+  },
+  {
+    num: 17, tw: "Jerusalem M'Ahotɔ Fie", en: "Jerusalem, My Happy Home",
+    verses: [
+      { label: "Verse 1",
+        tw: "Jerusalem m'ahotɔ fie,\nDin a ɛsom me bɔ,\nDabɛn na me nwumma bɛsa,\nWo asomdwoe mu, Wo mu.",
+        en: "Jerusalem, my happy home,\nName ever dear to me!\nWhen shall my labours have an end\nIn joy and peace and thee?" },
+      { label: "Verse 2",
+        tw: "Dabɛn na m'aniwa bɛhu,\nW'afasuo noa poni?\nN-kwagyeɛ nhyɛ W'aban den,\nWo sika mmorɔn so hyerɛn.",
+        en: "When shall these eyes thy heaven-built walls\nAnd pearly gates behold?\nThy bulwarks, with salvation strong,\nAnd streets of shining gold?" },
+      { label: "Verse 3",
+        tw: "ɛhɔ nhwirɛn kyɛn Eden dɛ,\nBɔne ne yea nni hɔ,\nMenam abɔ ne ahum so,\nPere kɔ nhyirabea yi.",
+        en: "There happier bowers than Eden's bloom,\nNor sin nor sorrow know;\nBlest seats, through rude and stormy scenes,\nI onward press to you." },
+      { label: "Verse 4",
+        tw: "Dɛn nti na mesuro mmusuo,\nNa owuo yɛ me hu,\nM'ani da kana pa no so,\nBea a ade nsa so da.",
+        en: "Why should I shrink at pain and woe,\nOr feel at death dismay?\nI've Canaan's goodly land in view,\nAnd realms of endless day." }
+    ]
+  },
+  {
+    num: 18, tw: "Awurade Ne Me Dwanhwɛfoo", en: "The Lord Is My Shepherd",
+    verses: [
+      { label: "Verse 1",
+        tw: "Awurade ne me dwanhwɛfoo,\nMerenhyia biribi,\nƆma me da wira fromm mu,\nƆgya me nsutae hɔ,\nƆgya me nsutae hɔ.",
+        en: "The Lord is my Shepherd, I shall not want,\nHe makes me lie down in green pastures;\nHe leads me beside the still waters,\nHe restores my soul." },
+      { label: "Verse 2",
+        tw: "Ɔde me kra san ba nkwam bio,\nNa ɔma me nante,\nNe nneyɛe trenee kwan no so,\nN'ankasa Ne din nti.",
+        en: "He guides me in the paths of righteousness,\nFor His name's sake;\nEven though I walk through the valley,\nI will fear no evil." },
+      { label: "Verse 3",
+        tw: "Manam owuo sum bɔn mu mpoa,\nMensuro mɔmmusuo biara,\nWone me nante, Wo poma,\nNe Wa'baa hyɛ me den.",
+        en: "Yea, though I walk through the valley,\nOf the shadow of death,\nI will fear no evil, for Thou art with me;\nThy rod and Thy staff, they comfort me." },
+      { label: "Verse 4",
+        tw: "Me pɔn nso Woawie to deda,\nWo matamfo anim,\nWode ngo fɔ ne tiri mu,\nMe kuruwa bu so,\nMekuruwa bu so.",
+        en: "Thou preparest a table before me,\nIn the presence of my enemies;\nThou anointest my head with oil,\nMy cup overflows." },
+      { label: "Verse 5",
+        tw: "Yie ne adoɛ bedi m'akyi,\nMe nkwa nna nyinaa mu,\nNa mede Nyame fie bɛyɛ,\nMe tɛnabea daa nyinaa.",
+        en: "Surely goodness and mercy shall follow me,\nAll the days of my life;\nAnd I will dwell in the house of the Lord,\nForever and ever." }
+    ]
+  },
+  {
+    num: 19, tw: "Magyaa Adɛɛ Nyinaa Ma Yesu", en: "All to Jesus I Surrender",
+    verses: [
+      { label: "Verse 1",
+        tw: "Magyaa adɛɛ nyinaa ma Yesu,\nMede ne nyinaa ama N'kwa,\nMedɔ No na matwere No,\nMɛtena N'anim daa nyinaa.",
+        en: "All to Jesus I surrender,\nAll to Him I freely give;\nI will ever love and trust Him,\nIn His presence daily live." },
+      { label: "Chorus",
+        tw: "Magyaa ne nyinaa mɛma Yesu,\nMede ma Wo nhyirafoɔ Yesu,\nMegyaa ne nyinaa ara m.",
+        en: "I surrender all, I surrender all,\nAll to Thee, my blessed Saviour,\nI surrender all." },
+      { label: "Verse 2",
+        tw: "Magyaa ne nyinaa mɛma Yesu,\nMɛkoto Ne nan ase,\nWiase mu anigyeɛ m'apaw,\nYesu fam' sesei ara.",
+        en: "All to Jesus I surrender,\nHumbly at His feet I bow,\nWorldly pleasures all forsaken,\nTake me, Jesus, take me now." },
+      { label: "Verse 3",
+        tw: "Magyaa ne nyinaa mama Iesu,\nAgyɛnkwa fa m'yɛ wo de ara.\nMa Honhom Kronkron nni dansɛɛ,\nMayɛ wo de na woyɛ m'dɛɛ.",
+        en: "All to Jesus I surrender,\nMake me, Saviour, wholly Thine;\nLet me feel the Holy Spirit,\nTruly know that Thou art mine." },
+      { label: "Verse 4",
+        tw: "Magyaa ne nyinaa mama Iesu,\nAfei mɛte ogye no nka,\nNkwagye kɛseɛ mu anigyeɛ,\nAnuuonyam nka ne din no.",
+        en: "All to Jesus I surrender,\nLord, I give myself to Thee;\nFill me with Thy love and power,\nLet Thy blessing fall on me." }
+    ]
+  },
+  {
+    num: 20, tw: "ɛyɛ Me Dɛ Sɛ Yɛn Agya Wɔ Soro", en: "I Am So Glad That Our Father in Heaven",
+    verses: [
+      { label: "Verse 1",
+        tw: "ɛyɛ me dɛ sɛ yɛn agya wɔ soro,\nKa Ne dɔ ho asɛm nhoma ɔde mae'm,\nAnwanwa sɛm pii na mehu Wɔ mu.\nDɛɛ ɛkyɛn ne nyinaa ne sɛ Yesu dɔ me.",
+        en: "I am so glad that our Father in heaven,\nTells of His love in the Book He has given;\nWonderful things in the Bible I see,\nThis is the dearest, that Jesus loves me." },
+      { label: "Chorus",
+        tw: "ɛyɛ me dɛ sɛ Yesu dɔ me,\nYesu dɔ me sɛɛ yi.",
+        en: "I am so glad that Jesus loves me,\nJesus loves me, Jesus loves me;\nI am so glad that Jesus loves me,\nJesus loves even me." },
+      { label: "Verse 2",
+        tw: "Yesu dɔ me na me nso mɛ-dɔ No,\nDɔ de No fii soro bɛgyee me nkwa,\nYiw ɛyɛ di na yde wui dua no so,\nO! minim pefee sɛ Yesu dɔ me.",
+        en: "If I forget Him and wander away,\nStill He doth love me wherever I stray;\nBack to His dear loving arms would I flee,\nWhen I remember that Jesus loves me." },
+      { label: "Verse 3",
+        tw: "Sɛ wobisa me a mɛka no sɛn,\n'Nuanyam nka Yesu minim yiye sɛ,\nNyame Honhom Kronkron ne me adɔm,\nRedi adanse sɛ Yesu dɔ me.",
+        en: "O if there's only one song I can sing,\nWhen in His beauty I see the great King,\nThis shall my song in eternity be,\n'O what a wonder that Jesus loves me!'" }
+    ]
+  },
+  {
+    num: 21, tw: "Kristo Yɛn Wura Asɔre Nnɛ", en: "Christ the Lord Is Risen Today",
+    verses: [
+      { label: "Verse 1",
+        tw: "Kristo yɛn Wura asɔre nnɛ,\nHalleluia;\nNnipa ne abofoo ka;\nHalleluia;\nMomma dɛ ne ahurusi so;\nHalleluia;\nSoro nto; wiase nnye so.\nHalleluia.",
+        en: "Christ the Lord is risen today, Alleluia!\nSons of men and angels say, Alleluia!\nRaise your joys and triumphs high, Alleluia!\nSing, ye heavens, and earth, reply, Alleluia!" },
+      { label: "Verse 2",
+        tw: "Ɔdɔ adi dwuma no;\nƆako adi nnim koraa;\nƆbɔ awɛmfoo ayɛ kwa;\nKristo afi awufoom.",
+        en: "Love's redeeming work is done, Alleluia!\nFought the fight, the battle won, Alleluia!\nDeath in vain forbids Him rise, Alleluia!\nChrist hath opened paradise, Alleluia!" },
+      { label: "Verse 3",
+        tw: "Yɛn nuonyam Hene te ase,\nOwuo, wo bɔre wo he?\nƆwuu prɛko, gyee yɛn kra,\nDamoa, wo nkonim wo he?",
+        en: "Lives again our glorious King, Alleluia!\nWhere, O death, is now thy sting? Alleluia!\nDying once He all doth save, Alleluia!\nWhere thy victory, O grave? Alleluia!" },
+      { label: "Verse 4",
+        tw: "Wɔakron Kristo wɔ soro,\nYɛdi N'akyi reko hɔ,\nYɛte sɛ No, Yɛsɔre,\nAsɛnnua ne soro yɛn dea.",
+        en: "Soar we now where Christ hath led, Alleluia!\nFollowing our exalted Head, Alleluia!\nMade like Him, like Him we rise, Alleluia!\nOurs the cross, the grave, the skies, Alleluia!" }
+    ]
+  },
+  {
+    num: 22, tw: "Mommra Momma Yɛmmom Nto Dwom", en: "Come, Let Us Unite to Sing",
+    verses: [
+      { label: "Verse 1",
+        tw: "Mommra momma yɛmmom nto dwom,\nNyame yɛ dɔ,\nMomma soro ne asase nyi N'ayɛ,\nNyame yɛ dɔ,\nMomma okra biara nsɔre! fi bɔn mu;\nNa ɔnto nwom a ɛyɛ dɛ,\nNa one yɛn nto nwom sɛ Yesu nti,\nNyame yɛ dɔ.",
+        en: "Come, let us all unite to sing,\nGod is love, God is love;\nCome, let us all unite to sing,\nGod is love.\nLet heaven and earth His praises ring,\nGod is love, God is love;\nLet heaven and earth His praises ring,\nGod is love." },
+      { label: "Verse 2",
+        tw: "Monka nkyerɛ aman nyinaa,\nNyame yɛ dɔ,\nYɛnya nkwahosan Kristo mu,\nNyame yɛ dɔ,\nNe mogya horo yɛn bɔne nyinaa,\nNe honhom de hann abrɛ yɛn,\nAfei yetumi de dɛ ka sɛ,\nNyame yɛ dɔ.",
+        en: "O tell to earth's remotest bound,\nGod is love, God is love;\nIn Christ we have redemption found,\nGod is love.\nHis blood has washed our sins away,\nGod is love, God is love;\nHis Spirit turned our night to day,\nGod is love." },
+      { label: "Verse 3",
+        tw: "Yɛbɛto nwom wɔ Kana bio,\nNyame yɛ dɔ,\nYɛbɛbom ato dwom kɛse,\nNyame yɛ dɔ,\nBerɛ a mfɛsanten rekɔ no,\nYɛne soro dɔm n'bedi nkonim,\nNayɛn dwom ɛyɛ dɛ bɛkase,\nNyame yɛ dɔ.",
+        en: "How happy is our portion here,\nGod is love, God is love;\nHis promises our spirits cheer,\nGod is love.\nHe is our Sun and He our Song,\nGod is love, God is love;\nHe will be ours our whole life long,\nGod is love." }
+    ]
+  },
+  {
+    num: 23, tw: "Asɛnnua A M'Agyɛnkwa Wui Ase", en: "Down at the Cross",
+    verses: [
+      { label: "Verse 1",
+        tw: "Asɛnnua am'agyɛnkwa wui ase,\nHɔ na merɛtɛɛm ɔnyɛ me nkwa,\nƆde ne mogya ka m'koma,\nAnuonyam nka Ne din.",
+        en: "Down at the cross where my Saviour died,\nDown where for cleansing from sin I cried,\nThere to my heart was the blood applied;\nGlory to His name!" },
+      { label: "Chorus",
+        tw: "Anuoyam nka Ne din, anuonyam nka Ne din,\nƆdɔ ne mogya ka m'koma,\nAnuonyam nka Ne din.",
+        en: "Glory to His name, glory to His name,\nThere to my heart was the blood applied;\nGlory to His name!" },
+      { label: "Verse 2",
+        tw: "Wɔagye me nkwa fi me bone mu,\nYesu m'agyɛnkwa te me mu,\nAsɛnnua nti menya ahɛnkyɛ,\nAnuonyam nka Ne din.",
+        en: "I am so wondrously saved from sin,\nJesus so sweetly abides within;\nThere at the cross where He took me in;\nGlory to His name!" },
+      { label: "Verse 3",
+        tw: "Bra asuti a ɛyɛ dɛ no ho,\nFa wo kra to Agyɛnkwa nanase,\nTo wo ho kyɛnem'ua wobedi mu,\nAnuoyam nka Ne din.",
+        en: "O precious fountain that saves from sin!\nI am so glad I have entered in;\nThere Jesus saves me and keeps me clean;\nGlory to His name!" }
+    ]
+  },
+  {
+    num: 24, tw: "Nyame Ne Wo Ntena Kosi Sɛ", en: "God Be with You Till We Meet Again",
+    verses: [
+      { label: "Verse 1",
+        tw: "Nyame newo ntena kosi sɛ yɛhyia bio,\nƆmfa N'adwɛn nkyerɛw kwan kura w'so,\nƆmfa w'nka Ne nnuan ho nnwɛn wo,\nNyame newo ntena kosi sɛ yɛhyia bio.",
+        en: "God be with you till we meet again,\nBy His counsels guide, uphold you,\nWith His sheep securely fold you;\nGod be with you till we meet again." },
+      { label: "Chorus",
+        tw: "Yɛbɛhyiam Yɛbɛyhiam bio,\nYɛbɛhyiam' wɔ Iesu anan ase,\nYɛbɛhyiam' Yɛbɛhyiam,\nNyame newo ntena kosi yɛbɛhyia bio.",
+        en: "Till we meet, till we meet,\nTill we meet at Jesus' feet;\nTill we meet, till we meet,\nGod be with you till we meet again." },
+      { label: "Verse 2",
+        tw: "Nyame ne wo ntena kosi sɛ yɛbɛhyia bio,\nƆmfa N'ataban nkata w'so,\nƆmma w'Manna mfa nnyen wo kra,\nNyame ne w' ntena kosi sɛ yɛbɛhyiam bio.",
+        en: "God be with you till we meet again,\n'Neath His wings securely hide you,\nDaily manna still provide you;\nGod be with you till we meet again." },
+      { label: "Verse 3",
+        tw: "Nyame ne 'w ntena kosi sɛ yɛbɛhyiam bio,\nƆmfa dɔ frankaa nsi wo so,\nƆmmɔ owuo ho suro mfi wanim,\nNyame ne wo ntena kosi sɛ yɛbɛhyiam bio.",
+        en: "God be with you till we meet again,\nKeep love's banner floating o'er you,\nSmite death's threatening wave before you;\nGod be with you till we meet again." }
+    ]
+  },
+  {
+    num: 25, tw: "Wo Nkyɛn Ara Nyame", en: "Nearer, My God, to Thee",
+    verses: [
+      { label: "Verse 1",
+        tw: "Wo nkyɛn ara Nyame,\nWo nkyɛn ara,\nSɛ asɛnnua so pɔ,\nNa menam a,\nMe nnwom nyinaa ne sɛ,\nWo nkyɛn ara Nyame!\nWo nkyɛn ara.",
+        en: "Nearer, my God, to Thee,\nNearer to Thee!\nE'en though it be a cross\nThat raiseth me,\nStill all my song shall be,\nNearer, my God, to Thee,\nNearer to Thee!" },
+      { label: "Verse 2",
+        tw: "Kansɛ merekyin pɔ,\nNa owia to,\nNa ade nso sa me,\nNa mesum bɔ a,\nM'adaeso mu mɛbɛn,\nWo nkyɛn ara Nyame,\nWo nkyɛn ara.",
+        en: "Though like the wanderer,\nThe sun gone down,\nDarkness be over me,\nMy rest a stone,\nYet in my dreams I'd be\nNearer, my God, to Thee,\nNearer to Thee!" },
+      { label: "Verse 3",
+        tw: "Ma kwan mmɛda hɔ a,\nWɔde kɔ soro,\nDɛɛ wɔma me nyinaa,\nAyamyɛ kwa,\nAbofoo frɛfrɛ me,\nWo nkyɛn ara Nyame,\nWo nkyɛn ara.",
+        en: "There let the way appear\nSteps unto heaven;\nAll that Thou sendest me\nIn mercy given;\nAngels to beckon me,\nNearer, my God, to Thee,\nNearer to Thee!" },
+      { label: "Verse 4",
+        tw: "Sɛ mede anigyeɛ,\nTu ha soro,\nMe wɛre fi bosom,\nWi ne nsoroma a,\nMe nnwom nyinaa ne sɛ,\nWo nkyɛn ara Nyame,\nWo nkyɛn ara.",
+        en: "Or if on joyful wing,\nCleaving the sky,\nSun, moon, and stars forgot,\nUpward I fly,\nStill all my song shall be,\nNearer, my God, to Thee,\nNearer to Thee!" }
+    ]
+  },
+  {
+    num: 26, tw: "Yehova Tumfoɔ Gyaa Me", en: "Guide Me, O Thou Great Jehovah",
+    verses: [
+      { label: "Verse 1",
+        tw: "O Yehova Tumfoɔ, gyaa me,\nKwantuni Wɔ sɛre so,\nMeyɛ mmɛrɛ, na wɔ ho yɛ den,\nKura me Wo tumi nsa mu,\nSoro Aduan,\nYɛn me nnɛ ne daa nyinaa.",
+        en: "Guide me, O Thou great Jehovah,\nPilgrim through this barren land;\nI am weak, but Thou art mighty,\nHold me with Thy powerful hand;\nBread of heaven, bread of heaven,\nFeed me till I want no more." },
+      { label: "Verse 2",
+        tw: "Bue nsuaniwa hyɛnhyɛn nɔ,\nDɛɛ yaresa nsuo pɛm no,\nMa ogya ne mununkum dum,\nGyɛfoo Tumfoɔ,\nYɛ me mmoa ne me kyɛm daa.",
+        en: "Open now the crystal fountain\nWhence the healing stream doth flow;\nLet the fire and cloudy pillar\nLead me all my journey through:\nStrong Deliverer, strong Deliverer,\nBe Thou still my strength and shield." },
+      { label: "Verse 3",
+        tw: "Sɛ medu Jordan kɔnkɔɔ so a,\nMa me suro nyinaa nsa,\nWuo kumfoɔ, asaman seɛfoɛ,\nFa me kɔdu Kana sonn,\nAyeyie nnwom,\nNa mede bɛma Wɔ daa.",
+        en: "When I tread the verge of Jordan,\nBid my anxious fears subside;\nDeath of death, and hell's Destruction,\nLand me safe on Canaan's side:\nSongs of praises, songs of praises,\nI will ever give to Thee." }
+    ]
+  },
+  {
+    num: 27, tw: "Ne Nyinaa Yɛ Ma Me Kra", en: "It Is Well with My Soul",
+    verses: [
+      { label: "Verse 1",
+        tw: "Sɛ asomdwoe bɛn sɛ asute wɔ me kwan mu,\nSɛ yea buhu ba sɛ asorokye,\nMe hyɛbɛrɛ te sɛua Woakyerɛm sɛ menhu sɛ,\nNe nyinaa yɛ, ne nyinaa yɛ ma me kra.",
+        en: "When peace like a river attendeth my way,\nWhen sorrows like sea billows roll;\nWhatever my lot, Thou hast taught me to say,\nIt is well, it is well with my soul." },
+      { label: "Chorus",
+        tw: "Ne nyinaa yɛ ma me kra,\nNe nyinaa yɛ ne nyinaa yɛ,\nMa me kra.",
+        en: "It is well, it is well,\nWith my soul, with my soul,\nIt is well, it is well with my soul." },
+      { label: "Verse 2",
+        tw: "Sɛ 'bosam di m'ho fɛw na sɔhwɛ ba me so,\nMa awɛrɛkyɛkyɛsɛm yi nkae me,\nSɛ Kristo ahu me mmobɔtebea yi,\nNa Ɔkyee ne mogya ma me kra.",
+        en: "Though Satan should buffet, though trials should come,\nLet this blest assurance control,\nThat Christ hath regarded my helpless estate,\nAnd hath shed His own blood for my soul." },
+      { label: "Verse 3",
+        tw: "Afei mete me ma mete Kristo,\nSɛ Yordan bɛpram fa me so,\nMerensuro bio fisɛ wu mu nkwa mu o,\nWobɛka asomdwoe-sɛm kyerɛ me kra.",
+        en: "And Lord, haste the day when faith shall be sight,\nThe clouds be rolled back as a scroll;\nThe trump shall resound and the Lord shall descend,\nEven so, it is well with my soul." },
+      { label: "Verse 4",
+        tw: "Awurade Wo ba no, Wo ba no na yɛtwɛn,\nƆsoro nyɛ ɛdam ne yɛn wiei,\nO! Abɔfo abɛn O! Awurade nne,\nNhyira nidasoɔ ma me kra.",
+        en: "But Lord, 'tis for Thee, for Thy coming we wait,\nThe sky, not the grave, is our goal;\nOh, trump of the angel! O voice of the Lord!\nBlessed hope, blessed rest of my soul." }
+    ]
+  },
+  {
+    num: 28, tw: "Kronkron, Kronkron, Kronkron", en: "Holy, Holy, Holy",
+    verses: [
+      { label: "Verse 1",
+        tw: "Kronkron, kronkron, kronkron Tumfoɔ Nyankonpon,\nYɛn nnwom bɛforo aba wo nkyɛn anɔpa,\nKronkron, kronkron, kronkron,\nMmɔbrɔhunfoo Tumfuo,\nNyame baAsakro, Ɔkorosa Hyirafo.",
+        en: "Holy, holy, holy! Lord God Almighty!\nEarly in the morning our song shall rise to Thee;\nHoly, holy, holy! Merciful and mighty!\nGod in three Persons, blessèd Trinity!" },
+      { label: "Verse 2",
+        tw: "Kronkron, kronkron, kronkron, Sɛ sum de Wo sie,\nNa onipa ntumi nbu W'anuonyam pɔ a,\nWo nko na Woyɛ Kronkron; Obi nka Wo ho bio,\nWo tumi, dɔ ne kronkronyɛ di mu.",
+        en: "Holy, holy, holy! All the saints adore Thee,\nCasting down their golden crowns around the glassy sea;\nCherubim and seraphim falling down before Thee,\nWhich wert, and art, and evermore shalt be." },
+      { label: "Verse 3",
+        tw: "Kronkron, kronkron, kronkron, Tumfoɔ Nyankopon,\nWo nnwuma bɛkamfo Wo din wɔ mmaa nyinaa,\nKronkron, kronkron, kronkron, mmɔbrɔhufoo, Tumfoo,\nNyame Baasakoro, Ɔkorsa Hyirafoo.",
+        en: "Holy, holy, holy! Lord God Almighty!\nAll Thy works shall praise Thy name in earth and sky and sea;\nHoly, holy, holy! Merciful and mighty!\nGod in three Persons, blessèd Trinity." }
+    ]
+  },
+  {
+    num: 29, tw: "Ɔdaa Adamoa N'mu", en: "Low in the Grave He Lay",
+    verses: [
+      { label: "Verse 1",
+        tw: "Ɔdaa adamoa n'mu,\nYesu m'agyɛnkwa;\nƆrɛtwɛn adɛkyɛɛ n'\nMe Wura Yesu.",
+        en: "Low in the grave He lay,\nJesus my Saviour!\nWaiting the coming day,\nJesus my Lord!" },
+      { label: "Chorus",
+        tw: "Ɔsoree puiei fii Ne dam,\nNe tumi kaa N'atamfoo hyeɛ,\nYesu dii owu n'aheman so konim,\nƆtwe nkwam Odi makoma so hene daa nyinaa,\nƆsoree, Ɔsoree, Halleluia Kristo soree.",
+        en: "Up from the grave He arose,\nWith a mighty triumph o'er His foes;\nHe arose a Victor from the dark domain,\nAnd He lives forever with His saints to reign!\nHe arose! He arose! Hallelujah! Christ arose!" },
+      { label: "Verse 2",
+        tw: "Wɔwɛn Ne dabrɛ kwa,\nYesu m'Agyɛnkwa,\nWoantumi ansi N'kwan,\nMe Wura Yesu.",
+        en: "Vainly they watched His bed,\nJesus my Saviour!\nVainly they sealed the dead,\nJesus my Lord!" },
+      { label: "Verse 3",
+        tw: "Owu bɛrɛ atu,\nYesu m'Agyɛnkwa,\nƆdwirii nnadɛɛ ban n'\nMe Wura Yesu.",
+        en: "Death cannot keep his prey,\nJesus my Saviour!\nHe tore the bars away,\nJesus my Lord!" }
+    ]
+  },
+  {
+    num: 30, tw: "Sɛdɛɛ Yesu Din Si Yɛ Dɛ", en: "How Sweet the Name of Jesus Sounds",
+    verses: [
+      { label: "Verse 1",
+        tw: "Sɛdɛɛ Yesu din si yɛ dɛ,\nWo gyedi ne som,\nɛtu ne yea sane yare,\nɛtu ne suro nyinaa.",
+        en: "How sweet the name of Jesus sounds\nIn a believer's ear!\nIt soothes his sorrows, heals his wounds,\nAnd drives away his fear." },
+      { label: "Verse 2",
+        tw: "ɛbɔ Honhom pirafoo asu.\nɛdwɔ koma woabrɛ,\nAduane ma honhom ɔkom sw n'\nAhongye ma bɛrɛfoo.",
+        en: "It makes the wounded spirit whole,\nAnd calms the troubled breast;\n'Tis manna to the hungry soul,\nAnd to the weary, rest." },
+      { label: "Verse 3",
+        tw: "Me mmɔdɛnmmɔ ayɛ mmɛrɛ,\nM'akoma yɛ awɔwawɔw,\nNa bɛrɛ a mehu sɛdɛɛ Wotɛɛ,\nM'eyi wo'ayɛ sɛ dɛɛ ɛsɛ.",
+        en: "Dear Name, the rock on which I build,\nMy shield and hiding place,\nMy never-failing treasury, filled\nWith boundless stores of grace." },
+      { label: "Verse 4",
+        tw: "Kyerɛ da'n na maka dɔ no,\nMede nkwahwea biara,\nMa Wodin nnwom a ɛyɛ dɛ,\nƆlome me kra wo wuom.",
+        en: "Jesus! My Shepherd, Husband, Friend,\nMy Prophet, Priest, and King,\nMy Lord, my Life, my Way, my End,\nAccept the praise I bring." }
+    ]
+  },
+  {
+    num: 31, tw: "Oyi Ne Nyame", en: "This Is God We Worship",
+    verses: [
+      { label: "Verse 1",
+        tw: "Oyi ne Nyame a yɛsom No,\nYɛn Dofoo pa a Ɔnsakyera da.\nNe dɔ so sɛ Ne tumi no,\nɛnni Nsuisui anaa awiei.",
+        en: "This is God whom we worship,\nOur faithful Friend who never fails;\nHis love is great as His power,\nHis mercy knows no end." },
+      { label: "Verse 2",
+        tw: "Yesu Mfiase ne awiei,\nNe Honhom de yɛ bɛdu fie,\nYɛyi No ayɛ dɛɛ atwam ho,\nYɛdan No dɛɛ ɛreba ho.",
+        en: "Jesus, the first and the last,\nHis Spirit will lead us home;\nWe praise Him for what He has done,\nAnd trust Him for what's to come." }
+    ]
+  },
+  {
+    num: 32, tw: "O' Medɔ Me Yesu", en: "O, I Love My Jesus",
+    verses: [
+      { label: "Verse 1", tw: "O' medɔ me Yesu,\nƆno Ɔdoɔ me kan.", en: "O, I love my Jesus,\nHe first loved me." },
+      { label: "Verse 2", tw: "Me wɛrɛ remfi no,\nƆno Ɔwu maa me.", en: "I will not forget Him,\nHe died for me." },
+      { label: "Verse 3", tw: "Mete ase ma Yesu,\nƆde ne nkwa maa me.", en: "I live for Jesus,\nHe gave His life for me." },
+      { label: "Verse 4", tw: "Hyira Wura kora me,\nMetwere Wo nkutoo.", en: "Bless the Lord who keeps me,\nI trust in Thee alone." },
+      { label: "Verse 5", tw: "Ao Yesu mɛdɔ Wo,\nMɛdɔ Wo ako wum.", en: "O Jesus, I love Thee,\nI'll love Thee till I die." },
+      { label: "Verse 6", tw: "Anuonyam nka Yesu,\nWɔ dɔ a Ɔdɔ me.", en: "Glory be to Jesus,\nWhose love has set me free." }
+    ]
+  },
+  {
+    num: 33, tw: "Makoma Mu", en: "Into My Heart",
+    verses: [
+      { label: "Verse 1",
+        tw: "Makoma mu, Makoma mu,\nBra makoma mu Owura Yesu,\nBra mu ɛnnɛ, Bra bɛtra mu.\nBra makoma mu Owura Yesu.",
+        en: "Into my heart, into my heart,\nCome into my heart, Lord Jesus;\nCome in today, come in to stay,\nCome into my heart, Lord Jesus." }
+    ]
+  },
+  {
+    num: 34, tw: "Anka Me Nya Tɛkyerɛma", en: "O for a Thousand Tongues to Sing",
+    verses: [
+      { label: "Verse 1",
+        tw: "Anka me nya tɛkyerɛma mpɛm,\nMayi me Gyefoo ayɛ,\nMakamfo me Hene anuonyam,\nN'adom ne Nkonimdie.",
+        en: "O for a thousand tongues to sing\nMy great Redeemer's praise!\nThe glories of my God and King,\nThe triumphs of His grace!" },
+      { label: "Verse 2",
+        tw: "Me Wura Dɛɛfoo me Nyankopɔn,\nBoa me memmɔ dawuro,\nMemfa Wo din ho nidie no,\nMenhyehye mmaa nyinaa.",
+        en: "My gracious Master and my God,\nAssist me to proclaim,\nTo spread through all the earth abroad,\nThe honours of Thy name." },
+      { label: "Verse 3",
+        tw: "Yesu' din a ɛtu yɛn suro,\nɛyi yɛn yea yinaa,\nGyegye dɛdɛ bɔnefo asom,\nɛyɛ nkwa ne asomdwoe.",
+        en: "Jesus! the name that charms our fears,\nThat bids our sorrows cease;\n'Tis music in the sinner's ears,\n'Tis life and health and peace." },
+      { label: "Verse 4",
+        tw: "Ɔkasa na wote ne nne a,\nAwufoo nya nkwa bio,\nAwɛrɛbofoo nya anigye,\nHiani brɛfoo gye di.",
+        en: "He speaks, and listening to His voice,\nNew life the dead receive;\nThe mournful, broken hearts rejoice;\nThe humble poor believe." },
+      { label: "Verse 5",
+        tw: "Ɔdwiri bɔne tumi koraa,\nƆtu idaduani duam,\nNe mogya tɛ bonefoo ho,\nɛdi nim ma me nso.",
+        en: "He breaks the power of cancelled sin,\nHe sets the prisoner free;\nHis blood can make the foulest clean;\nHis blood availed for me." }
+    ]
+  },
+  {
+    num: 35, tw: "Ɔko Kɛseɛ No Wɔawie Ko", en: "The Big Fight Is Finished",
+    verses: [
+      { label: "Verse 1",
+        tw: "Ɔko kɛseɛ no wɔawie ko,\nAfei yɛn sahene adi nim,\nMonfi ahurusi dwom ase,\nHalleluia.",
+        en: "The strife is o'er, the battle done;\nNow is the Victor's triumph won;\nO let the song of praise be sung;\nAlleluia!" },
+      { label: "Verse 2",
+        tw: "Owuo tumi ayɛ bi de,\nNanso Kristo ayi afi ho,\nMummɔ sɛ nto ahurusi dwom,\nHalleluia.",
+        en: "The powers of death have done their worst,\nBut Christ their legions hath dispersed;\nLet shouts of holy joy outburst:\nAlleluia!" },
+      { label: "Verse 3",
+        tw: "Awɛrɛhoo nnansa no atwam.\nƆde nkonim asore wum,\nNuonyam nka Hene a Ɔasore;\nHalleluia.",
+        en: "The three sad days have quickly sped;\nHe rises glorious from the dead;\nAll glory to our risen Head!\nAlleluia!" },
+      { label: "Verse 4",
+        tw: "Yɛn Wura W'amanɛhunu nti,\nGye Wo nkoa fi wuo bore mu,\nNa yɛanya nkwa ato Wo dwom.\nHalleluia.",
+        en: "He broke the age-bound chains of hell;\nThe bars from heaven's high portals fell;\nLet hymns of praise His triumphs tell!\nAlleluia!" }
+    ]
+  },
+  {
+    num: 36, tw: "Monyi Nyame Hene Ayɛ", en: "Praise God Our King",
+    verses: [
+      { label: "Verse 1",
+        tw: "Monyi Nyame Hene ayɛ,\nMomfa ayeyie nnwom mma No.",
+        en: "Praise God from whom all blessings flow,\nPraise Him all creatures here below." },
+      { label: "Chorus",
+        tw: "N'ahummobo tim hɔ daa,\nɛsi pi, yɛ nokware daa.",
+        en: "His faithfulness stands firm forever,\nHis truth endures forevermore." },
+      { label: "Verse 2",
+        tw: "Monhyira No; Ɔayo owia,\nSɛ ɛmmɔ aporo daa nyinaa.",
+        en: "Praise Him above ye heavenly host,\nPraise Father, Son, and Holy Ghost." },
+      { label: "Verse 3",
+        tw: "Na Ɔayo Ɔsrane nso,\nɛhyerɛn anadwofa.",
+        en: "He made the sun to rule the day,\nThe moon shines bright to light the way." },
+      { label: "Verse 8",
+        tw: "Anuonyam nka Hene, Dɛɛfoo,\nAbodɛɛ nto anuonyam,\nAnuonyam nka Agya, Ɔba,\nNe Honhom, Baasakoro no.",
+        en: "Praise God the Father, praise the Son,\nPraise Holy Spirit, Three in One;\nPraise Father, Son, and Holy Ghost,\nFrom all below and all the host." }
+    ]
+  },
+  {
+    num: 37, tw: "Koko Bi Si No Ho Ara", en: "There Is a Green Hill Far Away",
+    verses: [
+      { label: "Verse 1",
+        tw: "Koko bi si noho ara,\nKuro kɛseɛ n'akyi hɔ,\nNea Wɔsɛn yɛn Wura no,\nOwui gyee yɛn nkwa no.",
+        en: "There is a green hill far away,\nWithout a city wall,\nWhere the dear Lord was crucified,\nWho died to save us all." },
+      { label: "Verse 2",
+        tw: "Yɛnnim nso yɛrentumi nka,\nYea kɛseɛ a Ɔhui,\nNanso yɛgyedi sɛ yɛn nti,\nNa wɔsɛn No wo hɔ.",
+        en: "We may not know, we cannot tell\nWhat pains He had to bear;\nBut we believe it was for us\nHe hung and suffered there." },
+      { label: "Verse 3",
+        tw: "Obiara nni hoa ɔyɛ,\nObetumi bone ayi,\nƆno nko na Ɔbetumi abue,\nƆsoro pon ama yɛn.",
+        en: "He died that we might be forgiven,\nHe died to make us good,\nThat we might go at last to heaven,\nSaved by His precious blood." },
+      { label: "Verse 4",
+        tw: "O! Wadɔ yɛn dɔ kɛse pa,\nɛsɛ sɛ yɛ dɔ no,\nNa yɛatwere Ne Mogya No,\nNa Ɔɛayɛ Nadwuma.",
+        en: "O dearly, dearly has He loved!\nAnd we must love Him too,\nAnd trust in His redeeming blood,\nAnd try His works to do." }
+    ]
+  },
+  {
+    num: 38, tw: "Ɔbɔne Hu Nyansa Tɛm", en: "Hasten, Sinner, to Be Wise",
+    verses: [
+      { label: "Verse 1",
+        tw: "Ɔbone hu nyansa ntɛm;\nN-twɛn da foforo ansa.\nSɛ woda so po nyansa a,\nɛyɛ dɛn sɛ wobenya.",
+        en: "Hasten, sinner, to be wise,\nStay not for the morrow's sun;\nWisdom if you still despise,\nHarder is it to be won." },
+      { label: "Verse 2",
+        tw: "Su frɛ ahummobo ntɛm;\nNtwɛn da foforɔ ansa,\nAnyɛ a wo bɛrɛ atwam,\nAnsa na owia ato.",
+        en: "Hasten, mercy to implore,\nStay not for the morrow's sun;\nLest thy season should be o'er\nEre this evening's stage be run." },
+      { label: "Verse 3",
+        tw: "Ɔbone, san w'akyi ntɛm,\nNtwɛn da foforo ansa,\nBɛyɛ na wo kanea adum,\nNa nkwahosan aba.",
+        en: "Hasten, sinner, to return,\nStay not for the morrow's sun;\nLest thy lamp should cease to burn\nEre salvation's work is done." },
+      { label: "Verse 4",
+        tw: "Ɔbone yɛ ntɛm gye nhyira,\nN-twɛn da foforɔ ansa,\nAnsa na mmusuo ato wo,\nAnsa na ade akye.",
+        en: "Hasten, sinner, Jesus calls,\nStay not for the morrow's sun;\nJudgement then shall come and all\nBless the day His will was done." }
+    ]
+  },
+  {
+    num: 39, tw: "Mehia Wo Mmɛrɛ Nyinaa", en: "I Need Thee Every Hour",
+    verses: [
+      { label: "Verse 1",
+        tw: "Mehia wo mmɛrɛ nyinaa,\nAwurade,\nNnɛ bi mma asomdwoe,-\nSɛ Wo de no.",
+        en: "I need Thee every hour,\nMost gracious Lord;\nNo tender voice like Thine\nCan peace afford." },
+      { label: "Chorus",
+        tw: "Mehia wo ao, mehia wɔ,\nMmɛrɛ nyinaa mehia Wo,\nHyira mɛ sesei m'Agyɛnkwa,\nMaba Wo hɔ.",
+        en: "I need Thee, O I need Thee;\nEvery hour I need Thee!\nO bless me now, my Saviour,\nI come to Thee." },
+      { label: "Verse 2",
+        tw: "Mehia Wo mmɛrɛ nyinaa,\nTwi bɛn me daa,\nWobɛn me a sɔhwɛ,\nNni ahɔɔden.",
+        en: "I need Thee every hour,\nStay Thou nearby;\nTemptations lose their power\nWhen Thou art nigh." },
+      { label: "Verse 3",
+        tw: "Mehia Wo mmɛrɛ nyinaa,\nDɛ ne yea mu,\nBɛtena me nkyɛn, na mma\nƆbra nyɛ kwa.",
+        en: "I need Thee every hour,\nIn joy or pain;\nCome quickly and abide,\nOr life is vain." },
+      { label: "Verse 4",
+        tw: "Mehia Wo mmɛrɛ nyinaa,\nKyerɛ me Wo pɛ;\nNnɛɛma a Woahyɛhyɛɛhyɛɛ ho bɔ,\nYɔ wɔ me mu.",
+        en: "I need Thee every hour,\nTeach me Thy will;\nAnd Thy rich promises\nIn me fulfil." }
+    ]
+  },
+  {
+    num: 40, tw: "Yɛgu Aba Anɔpa, Ayamye Aba", en: "Bringing in the Sheaves",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yɛgu aba anɔpa ayamye aba,\nYɛgu aba awia-bɛrɛm ne annwumɛrɛ,\nRehwɛm twahere ne, wɛhere a yɛde twa,\nYɛde anigyeɛ bɛba yɛde aba n'bɛba.",
+        en: "Sowing in the morning, sowing seeds of kindness,\nSowing in the noontide and the dewy eve;\nWaiting for the harvest and the time of reaping,\nWe shall come rejoicing, bringing in the sheaves." },
+      { label: "Chorus",
+        tw: "Yɛde efin'bɛba, yɛde efin'bɛba,\nYɛde anigyeɛ bɛba, yɛde efin'bɛba.",
+        en: "Bringing in the sheaves, bringing in the sheaves,\nWe shall come rejoicing, bringing in the sheaves." },
+      { label: "Verse 2",
+        tw: "Yɛgu aba awiam' yɛgu aba nwin mu.\nYɛnsuro bosuo ana usutɔ bɛrɛ,\nNaama buhɛrɛ nnne adwuma no asa,\nYɛde anigyeɛ bɛba yɛde afin'bɛba.",
+        en: "Sowing in the sunshine, sowing in the shadows,\nFearing neither clouds nor winter's chilling breeze;\nBy and by the harvest and the labour ended,\nWe shall come rejoicing, bringing in the sheaves." },
+      { label: "Verse 3",
+        tw: "Afei fa sukodua, aba no ma Awurade,\nYɛ hwɛrɛ nnɛɛma pii dɛɛ na yɛn wɛrɛ ho,\nNanso yɛ nnusuo bɛsa ma ɔbɛyɛ yɛn atuu,\nYɛde anigyeɛ bɛba, yɛde efi n'bɛba.",
+        en: "Going forth with weeping, sowing for the Master,\nThough the loss sustained our spirit often grieves;\nWhen our weeping's over, He will bid us welcome,\nWe shall come rejoicing, bringing in the sheaves." }
+    ]
+  },
+  {
+    num: 41, tw: "Yesu Kora Me Asɛnnua Ho", en: "Jesus, Keep Me Near the Cross",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yesu kora me asɛnnua ho,\nDɛɛ nsuo a ɛsom hɔ,\nFi Kalvary bopo so,\nSɛn kwa ma Obiara.",
+        en: "Jesus, keep me near the cross;\nThere a precious fountain,\nFree to all, a healing stream\nFlows from Calvary's mountain." },
+      { label: "Chorus",
+        tw: "W'asɛnnuam W'asɛnnuam.\nNa mɛnhoahoa me ho,\nKosi sɛ owuo akyi,\nMe kra bɛhome daa.",
+        en: "In the cross, in the cross,\nBe my glory ever;\nTill my raptured soul shall find\nRest beyond the river." },
+      { label: "Verse 2",
+        tw: "Wasɛnnua ho, dɔ ne dɔm,\nHuu me kra hiani,\nAdɛkyee nsroma hyɛnhyɛn,\nNe nsrɛmɛn hyerɛn me so.",
+        en: "Near the cross, a trembling soul,\nLove and mercy found me;\nThere the Bright and Morning Star\nSheds its beams around me." },
+      { label: "Verse 3",
+        tw: "Dɛɛ esii W'asɛnnua ho,\nNyame Adwamaa kyerɛ me,\nAo; Boa me na mɛnnante,\nMe nwunu ase daa.",
+        en: "Near the cross! O Lamb of God,\nBring its scenes before me;\nHelp my walk from day to day\nWith its shadow o'er me." }
+    ]
+  },
+  {
+    num: 42, tw: "Gye Wɔn A Wɔayɛra Wɔn A Wɔrewu", en: "Rescue the Perishing",
+    verses: [
+      { label: "Verse 1",
+        tw: "Gye wɔn a wɔayɛra wɔn a wɔrewu,\nHwim wɔn firi bone ne damoa mu,\nSu ma nea ɔafɔm kwan, ma asɛhwefoo su,\nKa Yesu, Gyefoo ho asɛm Kyerɛ wɔn.",
+        en: "Rescue the perishing, care for the dying,\nSnatch them in pity from sin and the grave;\nWeep o'er the erring one, lift up the fallen,\nTell them of Jesus, the mighty to save." },
+      { label: "Chorus",
+        tw: "Gye wɔn a wɔayɛra, wɔn a wɔrewu,\nYesu yɛ Agyɛnkwa.",
+        en: "Rescue the perishing, care for the dying,\nJesus is merciful, Jesus will save." },
+      { label: "Verse 2",
+        tw: "Onipa koma mu, papa bi wɔ hɔ a,\nNyame dɔm tumi ma efi yi yɛ,\nɛte sɛ sanku a, ne dwom atwa sin,\nƆdɔ nsa ka no a ɛwoso bio.",
+        en: "Though they are slighting Him, still He is waiting,\nWaiting the penitent child to receive;\nPlead with them earnestly, plead with them gently;\nHe will forgive if they only believe." },
+      { label: "Verse 3",
+        tw: "Gye wɔn a wɔayɛra, ɛyɛ w'adwuma,\nAwurade bɛma wo ho ahɔɔden,\nFa boaseto twe wɔn si kwan so,\nSɛ akɔbofoo sɛ Gyefoo awu.",
+        en: "Rescue the perishing, duty demands it;\nStrength for thy labor the Lord will provide;\nBack to the narrow way patiently win them;\nTell the poor wanderer a Saviour has died." }
+    ]
+  },
+  {
+    num: 43, tw: "Dɛɛ Mete Yi Menni Hwee Ka", en: "Just As I Am",
+    verses: [
+      { label: "Verse 1",
+        tw: "Dɛɛ mete yi menni hwee ka,\nSɛ wohwiee Wo mogya maa me,\nNa Woka sɛ mɛmma Wo ho,\nNyame Adwamma meba.",
+        en: "Just as I am, without one plea\nBut that Thy blood was shed for me,\nAnd that Thou bidst me come to Thee,\nO Lamb of God, I come, I come!" },
+      { label: "Verse 2",
+        tw: "Dɛɛ mete yi merentwen sɛ,\nMepere ma mɛkra ho fi,\nW'oa wo mogya tumi tu fi,\nNyame Adwamma meba.",
+        en: "Just as I am, and waiting not\nTo rid my soul of one dark blot;\nTo Thee, whose blood can cleanse each spot,\nO Lamb of God, I come, I come!" },
+      { label: "Verse 3",
+        tw: "Dɛɛ mete yi, sɛ aperepere,\nƆko ne suro ahyɛ me ma,\nNa akvinnyi him me poa,\nNyame Adwamma meba.",
+        en: "Just as I am, though tossed about\nWith many a conflict, many a doubt;\nFightings and fears within, without,\nO Lamb of God, I come, I come!" },
+      { label: "Verse 4",
+        tw: "Dɛɛ mete yi Wobɛgye me,\nDe akyɛ me ate ne ho,\nMegyɛ W'anosɛm medi nti,\nNyame Adwamma meba.",
+        en: "Just as I am, poor, wretched, blind;\nSight, riches, healing of the mind,\nYea, all I need in Thee to find,\nO Lamb of God, I come, I come!" }
+    ]
+  },
+  {
+    num: 44, tw: "Wone Me Ntena", en: "Abide with Me",
+    verses: [
+      { label: "Verse 1",
+        tw: "Wone me ntena, ade reyɛ asɛa;\nSum reduru, Awurade tena menkyɛn,\nAboafoo pa, na awɛrɛkyekyefoo sao,\nO Ankonam Boafoo. Wone me ntena.",
+        en: "Abide with me; fast falls the eventide;\nThe darkness deepens; Lord, with me abide;\nWhen other helpers fail and comforts flee,\nHelp of the helpless, O abide with me." },
+      { label: "Verse 2",
+        tw: "Yɛn nkwa da ketewa yi retwam kɔ,\nWiase de repa; n'anuonyam resɛn;\nƆnsɛɛ ne ntakyera nko na mehu ha;\nAo, Wo a Wɔnsakyera da, Wone me ntena.",
+        en: "Swift to its close ebbs out life's little day;\nEarth's joys grow dim, its glories pass away;\nChange and decay in all around I see;\nO Thou who changest not, abide with me!" },
+      { label: "Verse 3",
+        tw: "Mehia Wo wɔ me nkyɛn bɛrɛ nyinaa;\nW'adɔm na ɛka sɔhwɛfoo no hyɛ;\nGyefoo, kyigyinafoo bɛn bɛn ne wo sɛ?\nSum mu o, han mu o, Wone me ntena.",
+        en: "I need Thy presence every passing hour;\nWhat but Thy grace can foil the tempter's power?\nWho like Thyself my guide and strength can be?\nThrough cloud and sunshine, O abide with me!" },
+      { label: "Verse 4",
+        tw: "Sɛ me ne Wo nam a mensuro hwee;\nƆyea nyɛ duru, nnisuo nyɛ nnwono;\nWuo bore, damoa nkonim, ɛwɔ he?\nMedi nkonim daa sɛ Wone me tena a.",
+        en: "I fear no foe with Thee at hand to bless;\nIlls have no weight, and tears no bitterness;\nWhere is death's sting? where, grave, thy victory?\nI triumph still, if Thou abide with me." },
+      { label: "Verse 5",
+        tw: "Memua m'ani a yi Wa'sɛnnua kyerɛme;\nHyerɛn sum mu, kyerɛ me soro kwan;\nƆsoro hyerɛn, wiase kusuu resa;\nOwuo muo, nkwa mu o, Wone me ntena.",
+        en: "Hold Thou Thy cross before my closing eyes;\nShine through the gloom, and point me to the skies;\nHeaven's morning breaks, and earth's vain shadows flee;\nIn life, in death, O Lord, abide with me!" }
+    ]
+  },
+  {
+    num: 45, tw: "Yesu Me Kra Ne Dɔfo", en: "Jesus, Lover of My Soul",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yesu me kra ne Dɔfo,\nMa menguan mmɛhyɛ wo hom.\nN-suo no reworo yi,\nNa ahum no rɛtu yi,\nMe Gyefoo fa me hunta,\nMa ahum no mmɔ mmɛsɛn,\nGya me kodu bɛrano,\nAo, awiei no gye me kra.",
+        en: "Jesus, Lover of my soul,\nLet me to Thy bosom fly,\nWhile the nearer waters roll,\nWhile the tempest still is high!\nHide me, O my Saviour, hide,\nTill the storm of life is past;\nSafe into the haven guide,\nO receive my soul at last!" },
+      { label: "Verse 2",
+        tw: "Menni huntabea biara,\nMe kra twere wo nkutoo.\nMma nnya me nko ara da,\nSɔ me mu, kyɛkye me wɛrɛ,\nMe wɛrɛ nyinaa hyɛ Wo mu,\nMe mmoa nyinaa fi Wo hɔ,\nFa Wo ntaban kɛseɛ no,\nKata me tikwa yi so.",
+        en: "Other refuge have I none,\nHangs my helpless soul on Thee;\nLeave, O leave me not alone,\nStill support and comfort me.\nAll my trust on Thee is stayed,\nAll my help from Thee I bring;\nCover my defenceless head\nWith the shadow of Thy wing." },
+      { label: "Verse 3",
+        tw: "Adɔm pii wɔ Wo nsam a,\nɛtata ma bone so;\nMa n-kwa nkuu no rɛsen mmuba,\nSan me hɔ na fa me sie;\nWone nkwa asutie no,\nMa memmɛsa bi mennom,\nBra bɛtaa me koma mu,\nTaa mu kɔ mmɛresanten nyinaa.",
+        en: "Thou, O Christ, art all I want;\nMore than all in Thee I find;\nRaise the fallen, cheer the faint,\nHeal the sick, and lead the blind.\nJust and holy is Thy name;\nI am all unrighteousness;\nFalse and full of sin I am;\nThou art full of truth and grace." }
+    ]
+  },
+  {
+    num: 46, tw: "Oduyɛfoo Kɛseɛ Abɛn", en: "The Great Physician",
+    verses: [
+      { label: "Verse 1",
+        tw: "Oduyɛfoo kɛseɛ abɛn,\nOne timmɔbɔ Yesu;\nƆkasa ma koma to yam,\nDofoo, tie Yesu nne no!",
+        en: "The great Physician now is near,\nThe sympathising Jesus;\nHe speaks the drooping heart to cheer,\nO hear the voice of Jesus." },
+      { label: "Chorus",
+        tw: "Dwom a ɛyɛ dɛ wɔ soro,\nDin a ɛyɛ dɛ wɔ ase,\nɛyɛ dɛ kyɛn dwom biara:\nYesu, hyirafoo Yesu.",
+        en: "Sweetest note in seraph song,\nSweetest name on mortal tongue;\nSweetest carol ever sung:\nJesus, blessed Jesus." },
+      { label: "Verse 2",
+        tw: "Wɔde wo bone akyɛ wo,\nDofoo, tie Yesu nne no;\nFa asomdwee tu wo kwan soro,\nWone, Yesu nhyɛ ahɛnkyɛ.",
+        en: "Your many sins are all forgiven,\nO hear the voice of Jesus;\nGo on your way in peace to heaven,\nAnd wear a crown with Jesus." },
+      { label: "Verse 3",
+        tw: "Anuonyam nka Nyame Adwamma,\nMegyɛ Yesu din no di;\nMedɔ Gyefoo hyirafoo no din,\nMedɔ me Yesu din no.",
+        en: "All glory to the dying Lamb!\nI now believe in Jesus;\nI love the blessed Saviour's name,\nI love the name of Jesus." },
+      { label: "Verse 4",
+        tw: "Ne din yɛ M'afodɛɛ nyinaa,\nDin bi nni hɔ sɛ Yesu,\nYesu din na, ne bɔ yɛ den,\nMe kra de a'igye tie.",
+        en: "His name dispels my guilt and fear,\nNo other name but Jesus;\nO how my soul delights to hear\nThe charming name of Jesus." }
+    ]
+  },
+  {
+    num: 47, tw: "Fa Yesu Din Bata Wo Ho", en: "Take the Name of Jesus with You",
+    verses: [
+      { label: "Verse 1",
+        tw: "Fa Yesu din bata wo ho,\nMmobɔrɔni wɛrɛhowni,\nɛbɛma wo awɛrɛkyɛkye,\nNea wokɔ biara fa kɔ.",
+        en: "Take the name of Jesus with you,\nChild of sorrow and of woe;\nIt will joy and comfort give you,\nTake it then where'er you go." },
+      { label: "Chorus",
+        tw: "O: Din Pa A ɛyɛdɛ,\n'Ha Nidasɔ Ne's'ro Dɛ.",
+        en: "Precious name, O how sweet!\nHope of earth and joy of heaven;\nPrecious name, O how sweet!\nHope of earth and joy of heaven." },
+      { label: "Verse 2",
+        tw: "Fa din no yɛ wo kwan,\nWo mfiri nyinaa hɔ,\nSɛ sɔhwɛ twa wo ho hyia,\nBɔ mpae din Kronkron no mu.",
+        en: "Take the name of Jesus ever,\nAs a shield from every snare;\nIf temptations round you gather,\nBreathe that holy name in prayer." },
+      { label: "Verse 3",
+        tw: "Yesu din mu na monkoto,\nNa montwa nhwɛ Ne nan'ase.\nHɛmpɔn kɛseɛ s'ro na ɔbɛyɛ,\nWo yɛn akwantuo no awiei.",
+        en: "O the precious name of Jesus!\nHow it thrills our souls with joy,\nWhen His loving arms receive us,\nAnd His songs our tongues employ!" }
+    ]
+  },
+  {
+    num: 48, tw: "Yesu Gye Nnebɔneyɛfoo", en: "Christ Receiveth Sinful Men",
+    verses: [
+      { label: "Verse 1",
+        tw: "Yesu gye nnebɔneyɛfoo,\nKa adɔmsɛm yi kyerɛ,\nWɔn a wɔafi soro kwan hɔ,\nNe wɔn a Wɔahwe ase.",
+        en: "Sinners Jesus will receive;\nSound this word of grace to all\nWho the heavenly pathway leave,\nAll who linger, all who fall." },
+      { label: "Chorus",
+        tw: "Si-so to, si so to bio,\nKristo gye nnebɔneyɛfoo,\nAsɛm mu, ma wonte ase,\nKristo gye nnebɔneyɛfoo.",
+        en: "Sing it o'er and o'er again;\nChrist receiveth sinful men;\nMake the message clear and plain:\nChrist receiveth sinful men." },
+      { label: "Verse 2",
+        tw: "Bra, ɔbɛma wo home,\nTwere No; N'asɛm si pii,\nKristo gye nnebɔneyɛfoo,\nAbɔne mu abɔne.",
+        en: "Now my heart condemns me not,\nPure before the law I stand;\nHe who cleansed me from all spot,\nSatisfied its last demand." },
+      { label: "Verse 3",
+        tw: "Kristo gye nnebɔneyɛfoo,\nMe po a me bɔne dooso,\nMe nkekae nyinaa bɛtui,\nƆne me bɛhyɛn soro.",
+        en: "Christ receiveth sinful men,\nEven me with all my sin;\nPurged from every spot and stain,\nHeaven with Him I enter in." }
+    ]
+  },
+  {
+    num: 49, tw: "Meyɛ Wode Nyame", en: "I Am Thine, O Lord",
+    verses: [
+      { label: "Verse 1",
+        tw: "Meyɛ Wode Nyame, mate wo nne,\nɛka Wo dɔ kyerɛ me,\nNa mepɛ sɛ mesɔre gyedi mu,\nNa metwe pini Wo nkyɛn.",
+        en: "I am Thine, O Lord, I have heard Thy voice,\nAnd it told Thy love to me;\nBut I long to rise in the arms of faith,\nAnd be closer drawn to Thee." },
+      { label: "Chorus",
+        tw: "Twe me bɛn yiye, yiye hyirafoo Nyame.\nTwe me bɛn W'asɛnnua no,\nTwe me bɛn yiye, yiye hyirafoo Nyame.\nTwe me bɛn Womfɛm mogya n'.",
+        en: "Draw me nearer, nearer, nearer, blessed Lord,\nTo the cross where Thou hast died;\nDraw me nearer, nearer, nearer, blessed Lord,\nTo Thy precious, bleeding side." },
+      { label: "Verse 2",
+        tw: "Nyame yi me si hɛ nnɛ ma wo som,\nWo dom no tumi no nti,\nMa me kra mfa anidasoo nhwewo,\nNa me pɛ mmɛn Wo demu.",
+        en: "Consecrate me now to Thy service, Lord,\nBy the power of grace divine;\nLet my soul look up with a steadfast hope,\nAnd my will be lost in Thine." },
+      { label: "Verse 3",
+        tw: "Ɔdɔ a ɛmu dɔ wɔ hɔ a minnim,\nGyesɛ metwa pɔ teaa no,\nAnigyɛ pii wɔ hɔ a me rennya,\nGyesɛ madu Wo nkyɛn hɔ.",
+        en: "There are depths of love that I cannot know\nTill I cross the narrow sea;\nThere are heights of joy that I may not reach\nTill I rest in peace with Thee." }
+    ]
+  },
+  {
+    num: 50, tw: "Asodie Da Me So", en: "A Charge to Keep I Have",
+    verses: [
+      { label: "Verse 1",
+        tw: "Asodie da me so,\nSɛ mekamfo Nyame,\nMɛgye me kraa ɛnwu da nkwa,\nMa daat soro.",
+        en: "A charge to keep I have,\nA God to glorify;\nA never-dying soul to save,\nAnd fit it for the sky." },
+      { label: "Verse 2",
+        tw: "Asom mmɛresantɛn yi,\nAdi me dwuma no,\nAnka mede made nyinaa,\nMayɛ me wura Ne pɛ.",
+        en: "To serve the present age,\nMy calling to fulfil;\nO may it all my powers engage\nTo do my Master's will!" },
+      { label: "Verse 3",
+        tw: "Ma mɛnhwɛ me ho yiye,\nTe sɛ mete wo nkyɛn,\nMe Wura, bɛboa wo Somfoo,\nNa mabu akontaa pa.",
+        en: "Arm me with jealous care,\nAs in Thy sight to live;\nAnd O Thy servant, Lord, prepare\nA strict account to give!" },
+      { label: "Verse 4",
+        tw: "Ma mɛnwɛn, memmɔ mpae,\nNa mɛntwere Wo nko,\nSɛ megoro m'adwuma ho a,\nMɛwu wua enni awiei.",
+        en: "Help me to watch and pray,\nAnd on Thyself rely;\nAssured, if I my trust betray,\nI shall for ever die." }
+    ]
+  }
 ];
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 let hymns = [], filtered = [];
 let selectedHymn = null, verse = 0, fontSize = 32;
 let presenting = false;
@@ -511,26 +1147,39 @@ let editIdx = null, veN = 0;
 const $ = id => document.getElementById(id);
 const T = (id, v) => { const e=$(id); if(e) e.textContent=v; };
 
-// ═══════════════════════════════════════════════
-// HYMN DATA
-// ═══════════════════════════════════════════════
 function loadHymns() {
-  try { const s=localStorage.getItem(HYMNS_KEY); return s?JSON.parse(s):[...DEFAULTS]; }
-  catch { return [...DEFAULTS]; }
+  try {
+    const s = localStorage.getItem(HYMNS_KEY);
+    const custom = s ? JSON.parse(s) : [];
+    // Merge: builtin hymns + any user-added ones not in builtin
+    const builtinNums = new Set(BUILTIN_HYMNS.map(h=>String(h.num)));
+    const extra = custom.filter(h=>!builtinNums.has(String(h.num)));
+    return [...BUILTIN_HYMNS, ...extra];
+  } catch { return [...BUILTIN_HYMNS]; }
 }
-function saveHymns() { try{localStorage.setItem(HYMNS_KEY,JSON.stringify(hymns));}catch{} }
+
+function saveHymns() {
+  // Only save non-builtin (user-added/edited) hymns
+  const builtinNums = new Set(BUILTIN_HYMNS.map(h=>String(h.num)));
+  const custom = hymns.filter(h=>!builtinNums.has(String(h.num)));
+  try { localStorage.setItem(HYMNS_KEY, JSON.stringify(custom)); } catch {}
+}
 
 function filter(q) {
-  q=q.toLowerCase().trim();
-  filtered=q?hymns.filter(h=>h.tw.toLowerCase().includes(q)||h.en.toLowerCase().includes(q)||String(h.num).includes(q)):[...hymns];
-  filtered.sort((a,b)=>a.num-b.num);
+  q = q.toLowerCase().trim();
+  filtered = q ? hymns.filter(h=>
+    String(h.tw).toLowerCase().includes(q) ||
+    String(h.en).toLowerCase().includes(q) ||
+    String(h.num).toLowerCase().includes(q)
+  ) : [...hymns];
+  filtered.sort((a,b)=>String(a.num).localeCompare(String(b.num),undefined,{numeric:true}));
   renderList();
 }
 
 function renderList() {
   $('hymn-list').innerHTML = filtered.length===0
     ? '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px;">No hymns found</div>'
-    : filtered.map(h=>`<div class="hymn-item${selectedHymn&&selectedHymn.num===h.num?' active':''}" onclick="pick(${h.num})">
+    : filtered.map(h=>`<div class="hymn-item${selectedHymn&&String(selectedHymn.num)===String(h.num)?' active':''}" onclick="pick('${h.num}')">
         <div class="h-num">No. ${h.num}</div>
         <div class="h-tw">${h.tw}</div>
         <div class="h-en">${h.en}</div>
@@ -539,7 +1188,7 @@ function renderList() {
 }
 
 function pick(num) {
-  selectedHymn = hymns.find(h=>h.num===num);
+  selectedHymn = hymns.find(h=>String(h.num)===String(num));
   verse = 0;
   $('btn-edit').style.display='';
   $('btn-del').style.display='';
@@ -548,9 +1197,6 @@ function pick(num) {
   if (presenting) renderPres();
 }
 
-// ═══════════════════════════════════════════════
-// PRESENTER PANEL
-// ═══════════════════════════════════════════════
 function renderPresenter() {
   if (!selectedHymn) return;
   const v = selectedHymn.verses[verse];
@@ -560,7 +1206,6 @@ function renderPresenter() {
   $('pos-badge').style.display='';
   $('btn-prev').disabled = verse===0;
   $('btn-next').disabled = verse===selectedHymn.verses.length-1;
-  // mini preview
   $('preview-empty').style.display='none';
   $('preview-grid').style.display='grid';
   T('pv-lbl-en', v.label); T('pv-lbl-tw', v.label);
@@ -579,56 +1224,6 @@ function renderStrip() {
       <div class="vt-tw">${v.tw}</div>
     </div>`;
   }).join('');
-}
-
-// ═══════════════════════════════════════════════
-// PRESENTATION (fullscreen overlay)
-// ═══════════════════════════════════════════════
-function togglePresent() {
-  if (!selectedHymn) return;
-  presenting ? stopPresenting() : startPresenting();
-}
-
-function startPresenting() {
-  presenting = true;
-  $('pres-view').classList.add('show');
-  $('present-btn').textContent = '⏹ Stop';
-  $('present-btn').classList.add('active');
-  $('pres-badge').classList.add('show');
-  renderPres();
-  // Go fullscreen — this fills your entire screen including the TV via Windows Cast
-  document.documentElement.requestFullscreen?.().catch(()=>{});
-}
-
-function stopPresenting() {
-  presenting = false;
-  $('pres-view').classList.remove('show');
-  $('present-btn').textContent = '▶ Present';
-  $('present-btn').classList.remove('active');
-  $('pres-badge').classList.remove('show');
-  if (document.fullscreenElement) document.exitFullscreen?.();
-  renderStrip();
-}
-
-function renderPres() {
-  if (!selectedHymn) return;
-  const v = selectedHymn.verses[verse];
-  const tot = selectedHymn.verses.length;
-  const fs  = fontSize;
-  T('pres-meta', `No. ${selectedHymn.num} — ${selectedHymn.tw}`);
-  T('pres-count', `${verse+1} of ${tot}`);
-  T('pres-lbl-tw', v.label); T('pres-lbl-en', v.label);
-  T('pres-tw', v.tw);        T('pres-en', v.en);
-  T('pres-pos', `${verse+1} / ${tot}`);
-  $('pres-tw').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
-  $('pres-en').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
-  $('pres-lang-tw').style.fontSize = `clamp(12px,1.4vw,18px)`;
-  $('pres-lang-en').style.fontSize = `clamp(12px,1.4vw,18px)`;
-  $('pres-lbl-tw').style.fontSize  = `clamp(9px,0.9vw,13px)`;
-  $('pres-lbl-en').style.fontSize  = `clamp(9px,0.9vw,13px)`;
-  $('pnav-prev').disabled = verse===0;
-  $('pnav-next').disabled = verse===tot-1;
-  renderStrip();
 }
 
 function go(dir) {
@@ -650,9 +1245,52 @@ function chFont(d) {
   if (presenting) renderPres();
 }
 
-// ═══════════════════════════════════════════════
-// KEYBOARD  (Space/Arrows = next/prev like PPT)
-// ═══════════════════════════════════════════════
+function togglePresent() {
+  if (!selectedHymn) return;
+  presenting ? stopPresenting() : startPresenting();
+}
+
+function startPresenting() {
+  presenting = true;
+  $('pres-view').classList.add('show');
+  $('present-btn').textContent = '⏹ Stop';
+  $('present-btn').classList.add('active');
+  $('pres-badge').classList.add('show');
+  renderPres();
+  document.documentElement.requestFullscreen?.().catch(()=>{});
+}
+
+function stopPresenting() {
+  presenting = false;
+  $('pres-view').classList.remove('show');
+  $('present-btn').textContent = '▶ Present';
+  $('present-btn').classList.remove('active');
+  $('pres-badge').classList.remove('show');
+  if (document.fullscreenElement) document.exitFullscreen?.();
+  renderStrip();
+}
+
+function renderPres() {
+  if (!selectedHymn) return;
+  const v = selectedHymn.verses[verse];
+  const tot = selectedHymn.verses.length;
+  const fs = fontSize;
+  T('pres-meta', `No. ${selectedHymn.num} — ${selectedHymn.tw}`);
+  T('pres-count', `${verse+1} of ${tot}`);
+  T('pres-lbl-en', v.label); T('pres-lbl-tw', v.label);
+  T('pres-en', v.en);        T('pres-tw', v.tw);
+  T('pres-pos', `${verse+1} / ${tot}`);
+  $('pres-en').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
+  $('pres-tw').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
+  $('pres-lang-en').style.fontSize = `clamp(12px,1.4vw,18px)`;
+  $('pres-lang-tw').style.fontSize = `clamp(12px,1.4vw,18px)`;
+  $('pres-lbl-en').style.fontSize  = `clamp(9px,0.9vw,13px)`;
+  $('pres-lbl-tw').style.fontSize  = `clamp(9px,0.9vw,13px)`;
+  $('pnav-prev').disabled = verse===0;
+  $('pnav-next').disabled = verse===tot-1;
+  renderStrip();
+}
+
 document.addEventListener('keydown', e => {
   if (document.querySelector('.modal-bg.show')) return;
   if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); go(1); }
@@ -661,27 +1299,24 @@ document.addEventListener('keydown', e => {
   else if (e.key==='F5'&&selectedHymn) { e.preventDefault(); togglePresent(); }
 });
 
-// ═══════════════════════════════════════════════
-// ADD / EDIT HYMN
-// ═══════════════════════════════════════════════
 function openModal(num) {
   editIdx=null; veN=0;
   $('m-num').value=''; $('m-tw').value=''; $('m-en').value='';
   $('v-editors').innerHTML='';
   $('modal-title').textContent='Add New Hymn';
   if (num!=null) {
-    const h=hymns.find(x=>x.num===num); if(!h) return;
+    const h=hymns.find(x=>String(x.num)===String(num)); if(!h) return;
     editIdx=hymns.indexOf(h);
     $('modal-title').textContent='Edit Hymn';
     $('m-num').value=h.num; $('m-tw').value=h.tw; $('m-en').value=h.en;
-    h.verses.forEach(v=>addVE(v.label,v.tw,v.en));
+    h.verses.forEach(v=>addVE(v.label,v.en,v.tw));
   }
   $('modal-bg').classList.add('show');
 }
 function closeModal() { $('modal-bg').classList.remove('show'); }
 function closeMBg(e) { if(e.target===$('modal-bg')) closeModal(); }
 
-function addVE(lb, tw='', en='') {
+function addVE(lb, en='', tw='') {
   veN++;
   const n = document.querySelectorAll('.verse-editor').length;
   const label = lb==='Verse'?`Verse ${n+1}`:lb;
@@ -693,14 +1328,14 @@ function addVE(lb, tw='', en='') {
     <button class="rm-v" onclick="document.getElementById('${id}').remove()">✕</button>
   </div>
   <div class="ve-cols">
-    <div><div class="ve-lbl" style="color:var(--gold)">Twi</div><textarea placeholder="Twi text...">${tw}</textarea></div>
     <div><div class="ve-lbl" style="color:var(--blue)">English</div><textarea placeholder="English text...">${en}</textarea></div>
+    <div><div class="ve-lbl" style="color:var(--gold)">Twi</div><textarea placeholder="Twi text...">${tw}</textarea></div>
   </div>`;
   $('v-editors').appendChild(d);
 }
 
 function saveHymn() {
-  const num=parseInt($('m-num').value);
+  const num=$('m-num').value.trim();
   const tw=$('m-tw').value.trim();
   const en=$('m-en').value.trim();
   if(!num||!tw||!en){alert('Please fill in number and both titles.');return;}
@@ -708,13 +1343,16 @@ function saveHymn() {
   document.querySelectorAll('.verse-editor').forEach(div=>{
     const label=div.querySelector('input').value.trim();
     const [a,b]=div.querySelectorAll('textarea');
-    if(a.value.trim()) verses.push({label,tw:a.value.trim(),en:b.value.trim()});
+    if(a.value.trim()) verses.push({label,en:a.value.trim(),tw:b.value.trim()});
   });
   if(!verses.length){alert('Please add at least one verse.');return;}
   const h={num,tw,en,verses};
-  if(editIdx!==null){ hymns[editIdx]=h; if(selectedHymn&&selectedHymn.num===num) selectedHymn=h; }
-  else { if(hymns.find(x=>x.num===num)){alert(`Hymn ${num} already exists.`);return;} hymns.push(h); }
-  hymns.sort((a,b)=>a.num-b.num);
+  if(editIdx!==null){ hymns[editIdx]=h; if(selectedHymn&&String(selectedHymn.num)===String(num)) selectedHymn=h; }
+  else {
+    if(hymns.find(x=>String(x.num)===String(num))){alert(`Hymn ${num} already exists.`);return;}
+    hymns.push(h);
+  }
+  hymns.sort((a,b)=>String(a.num).localeCompare(String(b.num),undefined,{numeric:true}));
   saveHymns(); closeModal();
   filter($('search').value);
   if(selectedHymn) renderPresenter();
@@ -722,7 +1360,7 @@ function saveHymn() {
 
 function delHymn() {
   if(!selectedHymn||!confirm(`Delete "${selectedHymn.tw}"?`)) return;
-  hymns=hymns.filter(h=>h.num!==selectedHymn.num);
+  hymns=hymns.filter(h=>String(h.num)!==String(selectedHymn.num));
   selectedHymn=null; verse=0;
   saveHymns();
   $('btn-edit').style.display='none'; $('btn-del').style.display='none';
@@ -734,11 +1372,8 @@ function delHymn() {
   filter($('search').value);
 }
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
+// Init
 hymns = loadHymns();
-hymns.sort((a,b)=>a.num-b.num);
 filter('');
 $('preview-grid').style.display='none';
 $('present-btn').disabled=true;
