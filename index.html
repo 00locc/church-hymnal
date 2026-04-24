@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Church Hymnal Projector v2</title>
+  <title>Church Hymnal Projector</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -422,15 +422,15 @@
     <div id="preview-wrap">
       <div id="preview-grid">
         <div class="prev-pane">
-          <div class="prev-lang tw">Twi</div>
-          <div class="prev-label" id="pv-lbl-tw"></div>
-          <div id="prev-tw"></div>
-        </div>
-        <div class="prev-sep"></div>
-        <div class="prev-pane">
           <div class="prev-lang en">English</div>
           <div class="prev-label" id="pv-lbl-en"></div>
           <div id="prev-en"></div>
+        </div>
+        <div class="prev-sep"></div>
+        <div class="prev-pane">
+          <div class="prev-lang tw">Twi</div>
+          <div class="prev-label" id="pv-lbl-tw"></div>
+          <div id="prev-tw"></div>
         </div>
       </div>
       <div id="preview-empty">
@@ -563,8 +563,8 @@ function renderPresenter() {
   // mini preview
   $('preview-empty').style.display='none';
   $('preview-grid').style.display='grid';
-  T('pv-lbl-tw', v.label); T('pv-lbl-en', v.label);
-  T('prev-tw', v.tw);      T('prev-en', v.en);
+  T('pv-lbl-en', v.label); T('pv-lbl-tw', v.label);
+  T('prev-en', v.en);      T('prev-tw', v.tw);
   renderStrip();
 }
 
@@ -575,8 +575,8 @@ function renderStrip() {
     const live = presenting && i===verse;
     return `<div class="v-thumb${cur?' cur':''}${live?' live':''}" onclick="jump(${i})">
       <div class="vt-lbl">${v.label}${live?'<span class="air-tag">ON AIR</span>':''}</div>
-      <div class="vt-tw">${v.tw}</div>
       <div class="vt-en">${v.en}</div>
+      <div class="vt-tw">${v.tw}</div>
     </div>`;
   }).join('');
 }
