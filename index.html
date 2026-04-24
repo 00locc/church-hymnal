@@ -282,7 +282,7 @@
     #pres-lang-en { color:var(--blue); }
     .pres-label { color:rgba(255,255,255,0.2); letter-spacing:0.07em; text-transform:uppercase; margin-bottom:14px; }
     #pres-tw { color:#fff; font-family:var(--font-h); font-weight:700; line-height:1.5; white-space:pre-line; text-align:center; }
-    #pres-en { color:rgba(255,255,255,0.78); line-height:1.6; white-space:pre-line; text-align:center; }
+    #pres-en { color:rgba(255,255,255,0.78); font-family:var(--font-h); font-weight:700; line-height:1.5; white-space:pre-line; text-align:center; }
 
     #pres-nav {
       display:flex; align-items:center; justify-content:center;
@@ -342,17 +342,17 @@
     <button id="pres-stop" onclick="stopPresenting()">✕ Stop Presenting (Esc)</button>
   </div>
   <div id="pres-stage">
-    <div class="pres-pane">
-      <div class="pres-lang" id="pres-lang-tw">Twi</div>
-      <div class="pres-label" id="pres-lbl-tw" style="font-size:clamp(10px,1vw,14px)"></div>
-      <div id="pres-tw"></div>
-    </div>
-    <div class="pres-sep"></div>
-    <div class="pres-pane">
-      <div class="pres-lang" id="pres-lang-en">English</div>
-      <div class="pres-label" id="pres-lbl-en" style="font-size:clamp(10px,1vw,14px)"></div>
-      <div id="pres-en"></div>
-    </div>
+  <div class="pres-pane">
+  <div class="pres-lang" id="pres-lang-en">English</div>
+  <div class="pres-label" id="pres-lbl-en" style="font-size:clamp(10px,1vw,14px)"></div>
+  <div id="pres-en"></div>
+  </div>
+  <div class="pres-sep"></div>
+  <div class="pres-pane">
+  <div class="pres-lang" id="pres-lang-tw">Twi</div>
+  <div class="pres-label" id="pres-lbl-tw" style="font-size:clamp(10px,1vw,14px)"></div>
+  <div id="pres-tw"></div>
+  </div>
   </div>
   <div id="pres-nav">
     <button class="pnav" id="pnav-prev" onclick="go(-1)">← Prev</button>
@@ -620,8 +620,8 @@ function renderPres() {
   T('pres-lbl-tw', v.label); T('pres-lbl-en', v.label);
   T('pres-tw', v.tw);        T('pres-en', v.en);
   T('pres-pos', `${verse+1} / ${tot}`);
-  $('pres-tw').style.fontSize      = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
-  $('pres-en').style.fontSize      = `clamp(${Math.round(fs*.68)}px,2.6vw,${Math.round(fs*1.65)}px)`;
+  $('pres-tw').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
+  $('pres-en').style.fontSize = `clamp(${fs}px,4.2vw,${fs*2.4}px)`;
   $('pres-lang-tw').style.fontSize = `clamp(12px,1.4vw,18px)`;
   $('pres-lang-en').style.fontSize = `clamp(12px,1.4vw,18px)`;
   $('pres-lbl-tw').style.fontSize  = `clamp(9px,0.9vw,13px)`;
