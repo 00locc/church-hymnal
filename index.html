@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Church Hymnal Projector</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f0eff8; --surface: #fff; --border: rgba(0,0,0,0.09);
+      --border2: rgba(0,0,0,0.16); --text: #1a1a1a; --text2: #555; --text3: #999;
+      --purple: #534AB7; --purple-light: #EEEDFE; --purple-mid: #7F77DD;
+      --green: #1a7a4a; --green-light: #eafaf2;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    #header { background: var(--purple); color: #fff; padding: 0 16px; height: 48px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    #header h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+    #hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .hdr-btn { padding: 6px 13px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .hdr-btn:hover { background: rgba(255,255,255,0.27); }
+    .hdr-btn.green { background: #1a7a4a; border-color: #1a7a4a; }
+    .hdr-btn.green:hover { background: #155e39; }
+    .live-pill { display: none; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.18); padding: 4px 11px; border-radius: 20px; }
+    .live-pill.show { display: flex; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ae88a; animation: blink 1.1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+    /* ══════════════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════════════ */
+    #app { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    #sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+    .search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
+    .search-wrap input { width: 100%; padding: 7px 10px; border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; background: var(--bg); color: var(--text); outline: none; }
+    .search-wrap input:focus { border-color: var(--purple-mid); }
+    #hymn-list { overflow-y: auto; flex: 1; }
+    .hymn-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .hymn-item:hover { background: var(--bg); }
+    .hymn-item.active { background: var(--purple-light); border-left: 3px solid var(--purple); }
+    .hymn-item .num { font-size: 10px; font-weight: 700; color: var(--text3); }
+    .hymn-item .ttw { font-size: 13px; font-weight: 700; }
+    .hymn-item .ten { font-size: 11px; color: var(--text2); margin-top: 1px; }
+    .sidebar-footer { padding: 9px 10px; border-top: 1px solid var(--border); display: flex; gap: 7px; }
+    .sb-btn { flex: 1; padding: 7px; border: 1px dashed var(--border2); border-radius: 7px; background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; }
+    .sb-btn:hover { background: var(--bg); }
+    .sb-btn.danger { color: #c0392b; border-color: #e74c3c; }
+
+    /* ── Presenter Panel ── */
+    #presenter { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+
+    /* Preview of current slide */
+    #slide-preview { flex-shrink: 0; margin: 14px 14px 0; background: #0a0a14; border-radius: 10px; overflow: hidden; aspect-ratio: 16/7; display: flex; }
+    #preview-stage { flex: 1; display: grid; grid-template-columns: 1fr 1px 1fr; }
+    #preview-div { background: #1a1a2a; }
+    .preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 3%; text-align: center; }
+    .preview-lang { font-size: clamp(8px,1.2vw,12px); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .preview-lang.tw { color: #8b7eee; }
+    .preview-lang.en { color: #6aab85; }
+    .preview-vlabel { color: #555; font-size: clamp(7px,0.9vw,10px); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    #preview-tw { color: #fff; text-align: center; line-height: 1.5; white-space: pre-line; font-weight: 600; font-size: clamp(10px,2vw,18px); }
+    #preview-en { color: #ccc; text-align: center; line-height: 1.55; white-space: pre-line; font-size: clamp(8px,1.4vw,13px); }
+    #preview-empty { display: flex; align-items: center; justify-content: center; color: #333; font-size: 13px; width: 100%; }
+
+    /* Slide controls bar */
+    #slide-controls { display: flex; align-items: center; gap: 10px; padding: 10px 14px; flex-shrink: 0; }
+    #hymn-title-bar { flex: 1; }
+    #hymn-title-bar h2 { font-size: 14px; font-weight: 700; color: var(--text); }
+    #hymn-title-bar p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+    .ctrl-btn { padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: background 0.15s; white-space: nowrap; }
+    .ctrl-btn:disabled { opacity: 0.28; cursor: default; }
+    #btn-prev-slide { background: var(--surface); border: 1px solid var(--border2); color: var(--text); }
+    #btn-prev-slide:not(:disabled):hover { background: #e8e8e8; }
+    #btn-next-slide { background: var(--purple); color: #fff; }
+    #btn-next-slide:not(:disabled):hover { background: #3C3489; }
+    #slide-pos { font-size: 12px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+
+    /* Verse thumbnail strip */
+    #verse-strip-wrap { flex: 1; overflow-y: auto; padding: 0 14px 14px; display: flex; flex-direction: column; gap: 7px; }
+    #verse-strip-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; padding: 6px 0 2px; flex-shrink: 0; }
+    .verse-thumb { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; transition: border-color 0.1s, background 0.1s; display: grid; grid-template-columns: auto 1fr 1fr; gap: 0 10px; align-items: start; flex-shrink: 0; }
+    .verse-thumb:hover { border-color: var(--purple-mid); }
+    .verse-thumb.active { border-color: var(--purple); background: var(--purple-light); }
+    .verse-thumb.live { border-color: var(--green); background: var(--green-light); }
+    .vt-num { font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 1px; }
+    .verse-thumb.live .vt-num { color: var(--green); }
+    .vt-tw { font-size: 11px; color: var(--text); line-height: 1.5; white-space: pre-line; }
+    .vt-en { font-size: 11px; color: var(--text2); line-height: 1.5; white-space: pre-line; }
+    .live-tag { display: inline-block; font-size: 9px; font-weight: 700; background: var(--green); color: #fff; padding: 1px 6px; border-radius: 8px; margin-left: 6px; vertical-align: middle; }
+
+    /* Font size controls */
+    #font-row { display: flex; align-items: center; gap: 6px; padding: 0 14px 8px; flex-shrink: 0; }
+    .font-btn { padding: 4px 10px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; font-size: 13px; }
+    #fs-val { font-size: 12px; font-weight: 700; min-width: 22px; text-align: center; color: var(--text2); }
+    #font-label { font-size: 12px; color: var(--text2); }
+
+    /* ══════════════════════════════════════
+       TV DISPLAY  (fullscreen, opened on TV browser)
+    ══════════════════════════════════════ */
+    #tv-display { display: none; position: fixed; inset: 0; background: #080810; z-index: 9000; flex-direction: column; }
+    #tv-display.show { display: flex; }
+    #tv-topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; flex-shrink: 0; }
+    #tv-hymn-name { color: #444; font-size: 12px; flex: 1; }
+    #tv-counter { color: #444; font-size: 12px; }
+    #tv-badge { font-size: 11px; padding: 3px 11px; border-radius: 20px; background: #0d2a1a; color: #3ae070; border: 1px solid #1a4a2a; display: flex; align-items: center; gap: 5px; }
+    .tv-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #3ae070; animation: blink 1.1s infinite; }
+    #tv-exit { color: #555; font-size: 11px; cursor: pointer; padding: 4px 10px; border: 1px solid #333; border-radius: 6px; }
+    #tv-stage { flex: 1; display: grid; grid-template-columns: 1fr 1px 1fr; overflow: hidden; }
+    #tv-divider { background: #1a1a2a; }
+    .tv-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5vw; text-align: center; }
+    .tv-lang { letter-spacing: 0.13em; text-transform: uppercase; font-weight: 800; margin-bottom: 22px; }
+    #tv-lang-tw { color: #8b7eee; }
+    #tv-lang-en { color: #6aab85; }
+    .tv-vlabel { color: #444; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+    #tv-tw { color: #ffffff; line-height: 1.55; white-space: pre-line; font-weight: 700; text-align: center; }
+    #tv-en { color: #dddddd; line-height: 1.6; white-space: pre-line; text-align: center; }
+    #tv-waiting { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: #333; flex: 1; }
+    #tv-waiting .wi { font-size: 52px; }
+    #tv-waiting p { font-size: 15px; }
+    #tv-waiting small { font-size: 12px; color: #2a2a2a; }
+
+    /* ══════════════════════════════════════
+       MODALS
+    ══════════════════════════════════════ */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; }
+    .modal-bg.show { display: flex; }
+    .modal-box { background: var(--surface); border-radius: 13px; padding: 26px; width: 500px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+    .modal-box h2 { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+    .mf { margin-bottom: 12px; }
+    .mf label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .mf input, .mf textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); background: var(--bg); font-family: inherit; outline: none; }
+    .mf textarea { min-height: 65px; resize: vertical; }
+    .mf input:focus, .mf textarea:focus { border-color: var(--purple-mid); }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+    .btn-cancel { padding: 8px 15px; border: 1px solid var(--border2); border-radius: 7px; background: transparent; cursor: pointer; font-size: 13px; }
+    .btn-primary { padding: 8px 18px; background: var(--purple); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    /* Hymn modal wider */
+    #hymn-modal-box { width: 600px; }
+    .ve-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ve-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .verse-editor { border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+    .ve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .ve-header input { border: none; background: transparent; font-size: 11px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.07em; outline: none; width: 120px; }
+    .remove-verse { background: none; border: none; color: #e24b4a; cursor: pointer; font-size: 16px; line-height: 1; }
+    #add-verse-row { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+    .avt { padding: 5px 11px; border: 1px dashed var(--border2); border-radius: 6px; background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; }
+    .avt:hover { background: var(--bg); }
+    /* Firebase modal */
+    .fb-steps { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; line-height: 2; }
+    .fb-steps ol { padding-left: 16px; }
+    .fb-steps code { background: #e8e7f5; color: var(--purple); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    .fb-sub { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.55; }
+    .fb-sub a { color: var(--purple); }
+    #fb-status { font-size: 12px; margin-top: 10px; padding: 8px 12px; border-radius: 6px; display: none; }
+    #fb-status.ok { background: #eafaf2; color: #1a7a4a; display: block; }
+    #fb-status.err { background: #feecec; color: #c0392b; display: block; }
+
+    /* How-to-cast tip */
+    #cast-tip { background: #1a1a2e; color: #aaa; font-size: 12px; padding: 8px 14px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; border-top: 1px solid #2a2a3a; display: none; }
+    #cast-tip.show { display: flex; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ TV DISPLAY (open this on each TV's browser) ══ -->
+<div id="tv-display">
+  <div id="tv-topbar">
+    <div id="tv-hymn-name"></div>
+    <div id="tv-counter"></div>
+    <div id="tv-badge"><div class="tv-badge-dot"></div>TV Display — Live</div>
+    <div id="tv-exit" onclick="exitTV()">Exit</div>
+  </div>
+  <div id="tv-stage" style="display:none">
+    <div class="tv-pane">
+      <div class="tv-lang" id="tv-lang-tw">Twi</div>
+      <div class="tv-vlabel" id="tv-vlabel-tw" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="tv-tw"></div>
+    </div>
+    <div id="tv-divider"></div>
+    <div class="tv-pane">
+      <div class="tv-lang" id="tv-lang-en">English</div>
+      <div class="tv-vlabel" id="tv-vlabel-en" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="tv-en"></div>
+    </div>
+  </div>
+  <div id="tv-waiting">
+    <div class="wi">📺</div>
+    <p>TV Display is ready</p>
+    <small>Waiting for presenter to go live...</small>
+  </div>
+</div>
+
+<!-- ══ FIREBASE MODAL ══ -->
+<div class="modal-bg" id="fb-modal-bg" onclick="closeFbBg(event)">
+  <div class="modal-box">
+    <h2>🔥 Connect Firebase</h2>
+    <p class="fb-sub"><a href="https://console.firebase.google.com/" target="_blank">Open Firebase Console</a> → select your <strong>church-hymnal</strong> project → follow these steps:</p>
+    <div class="fb-steps">
+      <ol>
+        <li>Click <strong>Build → Realtime Database → Create database</strong> → test mode</li>
+        <li>⚙️ gear → <strong>Project Settings → Your apps → Web (&lt;/&gt;)</strong> → Register</li>
+        <li>Copy <code>databaseURL</code> and <code>apiKey</code> from the config shown</li>
+      </ol>
+    </div>
+    <div class="mf"><label>Database URL</label><input type="text" id="fb-url" placeholder="https://church-hymnal-default-rtdb.firebaseio.com" /></div>
+    <div class="mf"><label>API Key</label><input type="text" id="fb-key" placeholder="AIzaSy..." /></div>
+    <div id="fb-status"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeFbModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveFbConfig()">Save & Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD/EDIT HYMN MODAL ══ -->
+<div class="modal-bg" id="hymn-modal-bg" onclick="closeHymnBg(event)">
+  <div class="modal-box" id="hymn-modal-box">
+    <h2 id="modal-title">Add New Hymn</h2>
+    <div class="mf"><label>Hymn Number</label><input type="number" id="m-num" placeholder="e.g. 42" /></div>
+    <div class="mf"><label>Title in Twi</label><input type="text" id="m-tw" placeholder="Twi title..." /></div>
+    <div class="mf"><label>Title in English</label><input type="text" id="m-en" placeholder="English title..." /></div>
+    <div class="mf">
+      <label>Verses</label>
+      <div id="verse-editors"></div>
+      <div id="add-verse-row">
+        <button class="avt" onclick="addVE('Verse')">+ Verse</button>
+        <button class="avt" onclick="addVE('Chorus')">+ Chorus</button>
+        <button class="avt" onclick="addVE('Bridge')">+ Bridge</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeHymnModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveHymn()">Save Hymn</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<div id="header">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <h1>Church Hymnal Projector</h1>
+  <div id="hdr-right">
+    <div class="live-pill" id="live-pill"><div class="live-dot"></div>LIVE</div>
+    <span style="font-size:11px;opacity:.55" id="hymn-count"></span>
+    <button class="hdr-btn" onclick="openTV()">📺 Open on TV</button>
+    <button class="hdr-btn" id="live-btn" onclick="toggleLive()" style="display:none">📡 Go Live</button>
+    <button class="hdr-btn" onclick="openFbModal()">⚙️ Firebase</button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <!-- Hymn list sidebar -->
+  <div id="sidebar">
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Search hymns..." oninput="filterHymns(this.value)" />
+    </div>
+    <div id="hymn-list"></div>
+    <div class="sidebar-footer">
+      <button class="sb-btn" onclick="openHymnModal()">+ Add</button>
+      <button class="sb-btn" id="edit-btn" style="display:none" onclick="openHymnModal(selectedHymn&&selectedHymn.num)">Edit</button>
+      <button class="sb-btn danger" id="del-btn" style="display:none" onclick="deleteHymn()">Delete</button>
+    </div>
+  </div>
+
+  <!-- Presenter panel -->
+  <div id="presenter">
+
+    <!-- Slide preview (mini version of what TVs see) -->
+    <div id="slide-preview">
+      <div id="preview-stage">
+        <div class="preview-pane">
+          <div class="preview-lang tw">Twi</div>
+          <div class="preview-vlabel" id="preview-vlabel-tw"></div>
+          <div id="preview-tw"></div>
+        </div>
+        <div style="background:#1a1a2a;width:1px"></div>
+        <div class="preview-pane">
+          <div class="preview-lang en">English</div>
+          <div class="preview-vlabel" id="preview-vlabel-en"></div>
+          <div id="preview-en"></div>
+        </div>
+      </div>
+      <div id="preview-empty">♪ Select a hymn to begin</div>
+    </div>
+
+    <!-- Controls row -->
+    <div id="slide-controls">
+      <div id="hymn-title-bar">
+        <h2 id="ctrl-hymn-tw">No hymn selected</h2>
+        <p id="ctrl-hymn-en"></p>
+      </div>
+      <span id="slide-pos"></span>
+      <button class="ctrl-btn" id="btn-prev-slide" onclick="changeVerse(-1)" disabled>← Prev</button>
+      <button class="ctrl-btn" id="btn-next-slide" onclick="changeVerse(1)" disabled>Next →</button>
+    </div>
+
+    <!-- Font size row -->
+    <div id="font-row">
+      <span id="font-label">TV font size:</span>
+      <button class="font-btn" onclick="changeFont(-2)">A−</button>
+      <span id="fs-val">28</span>
+      <button class="font-btn" onclick="changeFont(2)">A+</button>
+      <div style="flex:1"></div>
+      <button class="hdr-btn" id="live-btn2" onclick="toggleLive()" style="background:var(--green);border-color:var(--green);color:#fff;display:none">📡 Go Live</button>
+    </div>
+
+    <!-- Verse thumbnail strip -->
+    <div id="verse-strip-wrap">
+      <div id="verse-strip-label">Verses — click to jump</div>
+      <div id="verse-strip"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- How to cast tip -->
+<div id="cast-tip">
+  💡 <strong>How to show on TV:</strong> On each TV's browser, open this same website URL and tap <strong>"📺 Open on TV"</strong> — it will sync automatically when you click Go Live.
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+const DEFAULT_HYMNS = [
+  { num:1, tw:"Onyame Ayɛ Yiye", en:"God Has Been Good", verses:[
+    { label:"Verse 1", tw:"Onyame ayɛ yiye,\nOyɛ Nyankopɔn kɛse,\nN'adom na ɛhyɛ yɛn ma,\nDaa daa n'ayɛ yiye.", en:"God has been good to us,\nHe is the Almighty God,\nHis grace fills us always,\nForever He is good." },
+    { label:"Chorus", tw:"Ayeyi, ayeyi, ayeyi,\nYɛma Onyame ayeyi,\nN'ani so na yɛwɔ,\nYɛma no ayeyi.", en:"Praise, praise, praise,\nWe give God our praise,\nIn His sight we stand,\nWe give Him praise." },
+    { label:"Verse 2", tw:"Wahyira yɛn ho,\nWama yɛn ahotɔ,\nN'akoma mu na yɛtena,\nDaa daa n'ayɛ yiye.", en:"He has blessed our lives,\nHe has given us peace,\nIn His heart we dwell,\nForever He is good." }
+  ]},
+  { num:2, tw:"Yesu Dɔ Me", en:"Jesus Loves Me", verses:[
+    { label:"Verse 1", tw:"Yesu dɔ me, me nim saa,\nWɔkyerɛ me Kronkron Nhoma mu,\nMe ntɔkwa ne me hunu,\nOno na ɔwɔ me tumi.", en:"Jesus loves me, this I know,\nFor the Bible tells me so,\nLittle ones to Him belong,\nThey are weak but He is strong." },
+    { label:"Chorus", tw:"Yiw, Yesu dɔ me,\nYiw, Yesu dɔ me,\nYiw, Yesu dɔ me,\nWɔkyerɛ me Nhoma mu.", en:"Yes, Jesus loves me,\nYes, Jesus loves me,\nYes, Jesus loves me,\nThe Bible tells me so." },
+    { label:"Verse 2", tw:"Yesu dɔ me, ɔkɔe,\nWafiri soro ba ha,\nOsii ase ma me ho,\nMa mentra n'akyiri.", en:"Jesus loves me, He who died,\nHeaven's gate to open wide,\nHe will wash away my sin,\nLet His little child come in." }
+  ]},
+  { num:3, tw:"Onyankopɔn Adom", en:"Amazing Grace", verses:[
+    { label:"Verse 1", tw:"Onyankopɔn adom a ɛyɛ dɛ,\nWanya me a obiara tew,\nMe saa da bi na mereyera,\nNa ɛna me huu ɔkwan.", en:"Amazing grace, how sweet the sound,\nThat saved a wretch like me,\nI once was lost but now am found,\nWas blind but now I see." },
+    { label:"Verse 2", tw:"Adom na ɛsraa me akoma,\nMa menya gyidi,\nAdom bɛma me nkwa nyinaa,\nN'adom ma ɔkwan.", en:"'Twas grace that taught my heart to fear,\nAnd grace my fears relieved,\nHow precious did that grace appear,\nThe hour I first believed." },
+    { label:"Verse 3", tw:"Bere a me nkwa abɛwiei,\nNa maakɔ soro,\nMɛto dwom ɔkwan no nyinaa,\nNa meda Onyame ase.", en:"When we've been there ten thousand years,\nBright shining as the sun,\nWe've no less days to sing God's praise,\nThan when we first begun." }
+  ]},
+  { num:4, tw:"Medi Onyame Akyi", en:"I Will Follow God", verses:[
+    { label:"Verse 1", tw:"Medi Onyame akyi daa,\nMɛnyɛ n'apɛde nyinaa,\nN'abodwese mu na medi,\nDaa daa medi akyi.", en:"I will follow God always,\nI will do His will each day,\nIn His wisdom I will walk,\nForever I will follow." },
+    { label:"Chorus", tw:"Medi akyi, medi akyi,\nMedi Onyame akyi,\nM'akoma nyinaa mu,\nMedi no akyi.", en:"I will follow, I will follow,\nI will follow God above,\nWith all my heart within me,\nI will follow Him." }
+  ]},
+  { num:5, tw:"Yɛn Ara Yɛn Asaase Ni", en:"This Land Is Ours", verses:[
+    { label:"Verse 1", tw:"Yɛn ara yɛn asaase ni,\nEyi nye eyinom ara,\nMohyɛ mo nsa so oo,\nNa mommɔ mo ho ban.", en:"This land is ours, our very own,\nThese are our people here,\nHold fast with your hands,\nAnd guard it well." },
+    { label:"Verse 2", tw:"Onyame na ɔhyɛɛ yɛn ma,\nEyi nye eyinom ara,\nYɛda n'ase daa daa,\nYɛma no ayeyi.", en:"God granted this to us,\nThese are our blessings here,\nWe thank Him always,\nWe give Him praise." }
+  ]}
+];
+
+const HYMNS_KEY = 'church_hymns_v3';
+const FB_KEY = 'church_fb_v2';
+
+let hymns = [], filtered = [];
+let selectedHymn = null, currentVerse = 0;
+let fontSize = 28;
+let isLive = false, liveHymnNum = -1, liveVerseIdx = -1;
+let fbRef = null, fbReady = false;
+let editingIdx = null, veCount = 0;
+
+// ══════════════════════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════════════════════
+function initFirebase(cfg) {
+  try {
+    if (firebase.apps.length) firebase.apps.forEach(a => { try{a.delete();}catch{} });
+    firebase.initializeApp({ apiKey: cfg.apiKey, databaseURL: cfg.databaseURL });
+    fbRef = firebase.database().ref('live');
+    fbReady = true;
+    document.getElementById('live-btn').style.display = '';
+    document.getElementById('live-btn2').style.display = '';
+    document.getElementById('cast-tip').classList.add('show');
+    return true;
+  } catch(e) { fbReady=false; return false; }
+}
+
+function openFbModal() { document.getElementById('fb-modal-bg').classList.add('show'); }
+function closeFbModal() { document.getElementById('fb-modal-bg').classList.remove('show'); }
+function closeFbBg(e) { if(e.target===document.getElementById('fb-modal-bg')) closeFbModal(); }
+
+function saveFbConfig() {
+  const url = document.getElementById('fb-url').value.trim();
+  const key = document.getElementById('fb-key').value.trim();
+  const st = document.getElementById('fb-status');
+  if (!url||!key) { st.className='err'; st.textContent='Please fill in both fields.'; return; }
+  if (initFirebase({databaseURL:url,apiKey:key})) {
+    localStorage.setItem(FB_KEY, JSON.stringify({databaseURL:url,apiKey:key}));
+    st.className='ok'; st.textContent='✓ Connected! TVs will now sync instantly when you Go Live.';
+    setTimeout(closeFbModal, 1800);
+  } else {
+    st.className='err'; st.textContent='Could not connect — check your Database URL and API Key.';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// LIVE BROADCAST
+// ══════════════════════════════════════════════════════════
+function toggleLive() {
+  if (!selectedHymn) { alert('Please select a hymn first.'); return; }
+  if (!fbReady) { openFbModal(); return; }
+  isLive = !isLive;
+  ['live-btn','live-btn2'].forEach(id => {
+    const b = document.getElementById(id);
+    if (isLive) { b.textContent='⏹ Stop Live'; b.style.background='#c0392b'; b.style.borderColor='#c0392b'; }
+    else { b.textContent='📡 Go Live'; b.style.background='var(--green)'; b.style.borderColor='var(--green)'; }
+  });
+  document.getElementById('live-pill').classList.toggle('show', isLive);
+  if (isLive) {
+    liveHymnNum = selectedHymn.num;
+    liveVerseIdx = currentVerse;
+    pushLive();
+  } else {
+    liveHymnNum=-1; liveVerseIdx=-1;
+    if(fbRef) fbRef.set({active:false});
+  }
+  renderStrip();
+}
+
+function pushLive() {
+  if (!isLive||!fbRef||!selectedHymn) return;
+  const v = selectedHymn.verses[liveVerseIdx];
+  fbRef.set({ active:true, hymnNum:selectedHymn.num, hymnTw:selectedHymn.tw, hymnEn:selectedHymn.en,
+    verseIdx:liveVerseIdx, label:v.label, tw:v.tw, en:v.en,
+    total:selectedHymn.verses.length, fontSize, ts:Date.now() });
+}
+
+// ══════════════════════════════════════════════════════════
+// TV DISPLAY
+// ══════════════════════════════════════════════════════════
+function openTV() {
+  if (!fbReady) { openFbModal(); return; }
+  document.getElementById('tv-display').classList.add('show');
+  fbRef.on('value', snap => {
+    const d = snap.val();
+    const stage = document.getElementById('tv-stage');
+    const waiting = document.getElementById('tv-waiting');
+    if (!d||!d.active) { stage.style.display='none'; waiting.style.display='flex'; return; }
+    stage.style.display='grid'; waiting.style.display='none';
+    const fs = d.fontSize||28;
+    setText('tv-hymn-name', `No. ${d.hymnNum} — ${d.hymnTw}`);
+    setText('tv-counter', `${d.verseIdx+1} / ${d.total}`);
+    setText('tv-vlabel-tw', d.label); setText('tv-vlabel-en', d.label);
+    setText('tv-tw', d.tw); setText('tv-en', d.en);
+    el('tv-tw').style.fontSize = `clamp(${fs}px,5vw,${fs*2.8}px)`;
+    el('tv-en').style.fontSize = `clamp(${Math.round(fs*.72)}px,3vw,${Math.round(fs*2)}px)`;
+    el('tv-lang-tw').style.fontSize = `clamp(13px,1.5vw,20px)`;
+    el('tv-lang-en').style.fontSize = `clamp(13px,1.5vw,20px)`;
+    el('tv-vlabel-tw').style.fontSize = `clamp(10px,1vw,14px)`;
+    el('tv-vlabel-en').style.fontSize = `clamp(10px,1vw,14px)`;
+  });
+}
+
+function exitTV() {
+  if(fbRef) fbRef.off();
+  document.getElementById('tv-display').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════════════════
+// HYMN LIST
+// ══════════════════════════════════════════════════════════
+function loadHymns() {
+  try { const s=localStorage.getItem(HYMNS_KEY); return s?JSON.parse(s):[...DEFAULT_HYMNS]; }
+  catch { return [...DEFAULT_HYMNS]; }
+}
+function saveHymns() { try{localStorage.setItem(HYMNS_KEY,JSON.stringify(hymns));}catch{} }
+
+function filterHymns(q) {
+  q=q.toLowerCase().trim();
+  filtered=q?hymns.filter(h=>h.tw.toLowerCase().includes(q)||h.en.toLowerCase().includes(q)||String(h.num).includes(q)):[...hymns];
+  filtered.sort((a,b)=>a.num-b.num);
+  renderList();
+}
+
+function renderList() {
+  const list = el('hymn-list');
+  list.innerHTML = filtered.length===0
+    ? '<div style="padding:16px;text-align:center;color:#999;font-size:12px;">No hymns found</div>'
+    : filtered.map(h=>`<div class="hymn-item${selectedHymn&&selectedHymn.num===h.num?' active':''}" onclick="selectHymn(${h.num})">
+        <div class="num">No. ${h.num}</div>
+        <div class="ttw">${h.tw}</div>
+        <div class="ten">${h.en}</div>
+      </div>`).join('');
+  el('hymn-count').textContent = `${hymns.length} hymns`;
+}
+
+function selectHymn(num) {
+  selectedHymn = hymns.find(h=>h.num===num);
+  currentVerse = 0;
+  el('edit-btn').style.display='';
+  el('del-btn').style.display='';
+  if(isLive){ liveHymnNum=selectedHymn.num; liveVerseIdx=0; pushLive(); }
+  renderList(); renderPresenter();
+}
+
+// ══════════════════════════════════════════════════════════
+// PRESENTER VIEW
+// ══════════════════════════════════════════════════════════
+function renderPresenter() {
+  if (!selectedHymn) return;
+  const v = selectedHymn.verses[currentVerse];
+  // Title bar
+  setText('ctrl-hymn-tw', selectedHymn.tw);
+  setText('ctrl-hymn-en', `${selectedHymn.en} · No. ${selectedHymn.num}`);
+  setText('slide-pos', `${currentVerse+1} / ${selectedHymn.verses.length}`);
+  // Prev/Next buttons
+  el('btn-prev-slide').disabled = currentVerse===0;
+  el('btn-next-slide').disabled = currentVerse===selectedHymn.verses.length-1;
+  // Preview
+  el('preview-empty').style.display='none';
+  el('preview-stage').style.display='grid';
+  setText('preview-vlabel-tw', v.label); setText('preview-vlabel-en', v.label);
+  setText('preview-tw', v.tw); setText('preview-en', v.en);
+  renderStrip();
+}
+
+function renderStrip() {
+  if (!selectedHymn) return;
+  el('verse-strip').innerHTML = selectedHymn.verses.map((v,i)=>{
+    const isActive = i===currentVerse;
+    const isLiveVerse = isLive && liveHymnNum===selectedHymn.num && liveVerseIdx===i;
+    return `<div class="verse-thumb${isActive?' active':''}${isLiveVerse?' live':''}" onclick="jumpToVerse(${i})">
+      <div class="vt-num">${v.label}${isLiveVerse?'<span class="live-tag">LIVE</span>':''}</div>
+      <div class="vt-tw">${v.tw}</div>
+      <div class="vt-en">${v.en}</div>
+    </div>`;
+  }).join('');
+}
+
+function changeVerse(dir) {
+  const n = currentVerse + dir;
+  if (!selectedHymn||n<0||n>=selectedHymn.verses.length) return;
+  jumpToVerse(n);
+}
+
+function jumpToVerse(i) {
+  currentVerse = i;
+  if(isLive){ liveVerseIdx=i; pushLive(); }
+  renderPresenter();
+}
+
+function changeFont(d) {
+  fontSize = Math.max(14, Math.min(72, fontSize+d));
+  el('fs-val').textContent = fontSize;
+  if(isLive) pushLive();
+}
+
+// ══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS (like PowerPoint)
+// ══════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (document.querySelector('.modal-bg.show')) return; // ignore when modal open
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); changeVerse(1); }
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); changeVerse(-1); }
+});
+
+// ══════════════════════════════════════════════════════════
+// ADD / EDIT HYMN
+// ══════════════════════════════════════════════════════════
+function openHymnModal(num) {
+  editingIdx=null; veCount=0;
+  el('m-num').value=''; el('m-tw').value=''; el('m-en').value='';
+  el('verse-editors').innerHTML='';
+  el('modal-title').textContent='Add New Hymn';
+  if (num!=null) {
+    const h=hymns.find(x=>x.num===num); if(!h) return;
+    editingIdx=hymns.indexOf(h);
+    el('modal-title').textContent='Edit Hymn';
+    el('m-num').value=h.num; el('m-tw').value=h.tw; el('m-en').value=h.en;
+    h.verses.forEach(v=>addVE(v.label,v.tw,v.en));
+  }
+  el('hymn-modal-bg').classList.add('show');
+}
+function closeHymnModal() { el('hymn-modal-bg').classList.remove('show'); }
+function closeHymnBg(e) { if(e.target===el('hymn-modal-bg')) closeHymnModal(); }
+
+function addVE(lb, tw='', en='') {
+  veCount++;
+  const existing = document.querySelectorAll('.verse-editor').length;
+  const label = lb==='Verse'?`Verse ${existing+1}`:lb;
+  const id = 've_'+veCount;
+  const d = document.createElement('div');
+  d.className='verse-editor'; d.id=id;
+  d.innerHTML=`<div class="ve-header"><input type="text" value="${label}"/><button class="remove-verse" onclick="document.getElementById('${id}').remove()">✕</button></div>
+    <div class="ve-cols">
+      <div><div class="ve-col-label" style="color:#8b7eee;">Twi</div><textarea placeholder="Twi text...">${tw}</textarea></div>
+      <div><div class="ve-col-label" style="color:#6aab85;">English</div><textarea placeholder="English text...">${en}</textarea></div>
+    </div>`;
+  el('verse-editors').appendChild(d);
+}
+
+function saveHymn() {
+  const num=parseInt(el('m-num').value);
+  const tw=el('m-tw').value.trim();
+  const en=el('m-en').value.trim();
+  if(!num||!tw||!en){alert('Please fill in number and both titles.');return;}
+  const verses=[];
+  document.querySelectorAll('.verse-editor').forEach(div=>{
+    const label=div.querySelector('input').value.trim();
+    const [ta1,ta2]=div.querySelectorAll('textarea');
+    if(ta1.value.trim()) verses.push({label,tw:ta1.value.trim(),en:ta2.value.trim()});
+  });
+  if(!verses.length){alert('Please add at least one verse.');return;}
+  const newH={num,tw,en,verses};
+  if(editingIdx!==null){ hymns[editingIdx]=newH; if(selectedHymn&&selectedHymn.num===num){selectedHymn=newH;} }
+  else { if(hymns.find(h=>h.num===num)){alert(`Hymn ${num} already exists.`);return;} hymns.push(newH); }
+  hymns.sort((a,b)=>a.num-b.num);
+  saveHymns(); closeHymnModal();
+  filterHymns(el('search').value);
+  if(selectedHymn) renderPresenter();
+}
+
+function deleteHymn() {
+  if(!selectedHymn||!confirm(`Delete "${selectedHymn.tw}"?`)) return;
+  hymns=hymns.filter(h=>h.num!==selectedHymn.num);
+  selectedHymn=null; currentVerse=0;
+  saveHymns();
+  el('edit-btn').style.display='none'; el('del-btn').style.display='none';
+  el('preview-stage').style.display='none'; el('preview-empty').style.display='flex';
+  el('verse-strip').innerHTML='';
+  setText('ctrl-hymn-tw','No hymn selected'); setText('ctrl-hymn-en','');
+  el('btn-prev-slide').disabled=true; el('btn-next-slide').disabled=true;
+  filterHymns(el('search').value);
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════
+function el(id){ return document.getElementById(id); }
+function setText(id, val){ const e=el(id); if(e) e.textContent=val; }
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+hymns = loadHymns();
+hymns.sort((a,b)=>a.num-b.num);
+filterHymns('');
+el('preview-stage').style.display='none';
+
+// Load saved Firebase config
+try {
+  const cfg = JSON.parse(localStorage.getItem(FB_KEY)||'null');
+  if (cfg) initFirebase(cfg);
+} catch {}
+</script>
+</body>
+</html>
