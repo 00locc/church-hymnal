@@ -1,231 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Church Hymnal Projector</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Church Hymnal Projector — Phoenix Ghanaian SDA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f0eff8; --surface: #fff; --border: rgba(0,0,0,0.09);
-      --border2: rgba(0,0,0,0.16); --text: #1a1a1a; --text2: #555; --text3: #999;
-      --purple: #534AB7; --purple-light: #EEEDFE; --purple-mid: #7F77DD;
-      --green: #1a7a4a; --green-light: #eafaf2;
+      --navy:       #0d2a5e;
+      --blue:       #1a4b9c;
+      --blue-light: #3a7bd5;
+      --blue-pale:  #e8f0fb;
+      --gold:       #c9a84c;
+      --gold-dark:  #a8893a;
+      --white:      #ffffff;
+      --off-white:  #f7f9fc;
+      --text:       #1a1a2e;
+      --text-light: #5a6a85;
+      --border:     #d4e0f0;
+      --font-disp:  'Playfair Display', serif;
+      --font-body:  'DM Sans', sans-serif;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    body { font-family: var(--font-body); background: var(--off-white); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* ── Header ── */
-    #header { background: var(--purple); color: #fff; padding: 0 16px; height: 48px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    #header h1 { font-size: 15px; font-weight: 700; }
+    /* ── HEADER ─────────────────────────────── */
+    #header {
+      background: var(--navy); color: #fff;
+      padding: 0 20px; height: 52px;
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+      box-shadow: 0 2px 16px rgba(13,42,94,0.3);
+    }
+    #header .logo { display: flex; align-items: center; gap: 9px; }
+    #header .logo-cross { font-size: 20px; }
+    #header .logo-text { font-family: var(--font-disp); font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+    #header .logo-sub { font-size: 10px; opacity: 0.55; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
     #hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-    .hdr-btn { padding: 6px 13px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .hdr-btn:hover { background: rgba(255,255,255,0.27); }
-    .live-pill { display: none; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.18); padding: 4px 11px; border-radius: 20px; }
-    .live-pill.show { display: flex; }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ae88a; animation: blink 1.1s infinite; }
-    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+    .hdr-pill { display: none; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: rgba(201,168,76,0.25); border: 1px solid var(--gold); color: var(--gold); padding: 3px 10px; border-radius: 20px; }
+    .hdr-pill.show { display: flex; }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 1.1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.2} }
+    .hdr-count { font-size: 11px; opacity: 0.5; }
 
-    /* ── Layout ── */
+    /* ── LAYOUT ─────────────────────────────── */
     #app { display: flex; flex: 1; overflow: hidden; }
 
-    /* ── Sidebar ── */
-    #sidebar { width: 245px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+    /* ── SIDEBAR ────────────────────────────── */
+    #sidebar { width: 250px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
     .search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
-    .search-wrap input { width: 100%; padding: 7px 10px; border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; background: var(--bg); color: var(--text); outline: none; }
-    .search-wrap input:focus { border-color: var(--purple-mid); }
+    .search-wrap input { width: 100%; padding: 8px 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: var(--font-body); background: var(--off-white); color: var(--text); outline: none; }
+    .search-wrap input:focus { border-color: var(--blue-light); background: #fff; }
     #hymn-list { overflow-y: auto; flex: 1; }
     .hymn-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
-    .hymn-item:hover { background: var(--bg); }
-    .hymn-item.active { background: var(--purple-light); border-left: 3px solid var(--purple); }
-    .hymn-item .num { font-size: 10px; font-weight: 700; color: var(--text3); }
-    .hymn-item .ttw { font-size: 13px; font-weight: 700; }
-    .hymn-item .ten { font-size: 11px; color: var(--text2); margin-top: 1px; }
+    .hymn-item:hover { background: var(--blue-pale); }
+    .hymn-item.active { background: var(--blue-pale); border-left: 3px solid var(--blue); }
+    .hymn-item .num { font-size: 10px; font-weight: 700; color: var(--text-light); letter-spacing: 0.05em; }
+    .hymn-item .ttw { font-size: 13px; font-weight: 700; color: var(--text); }
+    .hymn-item .ten { font-size: 11px; color: var(--text-light); margin-top: 1px; }
     .sidebar-footer { padding: 9px 10px; border-top: 1px solid var(--border); display: flex; gap: 7px; }
-    .sb-btn { flex: 1; padding: 7px; border: 1px dashed var(--border2); border-radius: 7px; background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; }
-    .sb-btn:hover { background: var(--bg); }
-    .sb-btn.danger { color: #c0392b; border-color: #e74c3c; }
+    .sb-btn { flex: 1; padding: 7px; border: 1px dashed var(--border); border-radius: 7px; background: transparent; color: var(--text-light); font-size: 12px; font-family: var(--font-body); cursor: pointer; transition: background 0.1s; }
+    .sb-btn:hover { background: var(--blue-pale); }
+    .sb-btn.danger { color: #c0392b; border-color: #f5c6c6; }
 
-    /* ── Presenter Panel ── */
+    /* ── PRESENTER ──────────────────────────── */
     #presenter { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* Mini slide preview */
-    #slide-preview { flex-shrink: 0; margin: 12px 12px 0; background: #0a0a14; border-radius: 10px; overflow: hidden; aspect-ratio: 16/7; display: flex; }
-    #preview-stage { flex: 1; display: grid; grid-template-columns: 1fr 1px 1fr; display: none; }
-    #preview-div { background: #1a1a2a; }
-    .preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 3%; text-align: center; }
-    .preview-lang { letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; font-size: clamp(8px,1.1vw,11px); }
-    .preview-lang.tw { color: #8b7eee; }
-    .preview-lang.en { color: #6aab85; }
-    .preview-vlabel { color: #555; font-size: clamp(7px,0.8vw,10px); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
-    #preview-tw { color: #fff; text-align: center; line-height: 1.5; white-space: pre-line; font-weight: 600; font-size: clamp(9px,1.8vw,16px); }
-    #preview-en { color: #ccc; text-align: center; line-height: 1.5; white-space: pre-line; font-size: clamp(8px,1.3vw,12px); }
-    #preview-empty { display: flex; align-items: center; justify-content: center; color: #333; font-size: 13px; width: 100%; }
+    /* Slide preview — looks like a TV/projector screen */
+    #slide-preview {
+      flex-shrink: 0; margin: 12px 12px 0;
+      background: var(--navy); border-radius: 10px; overflow: hidden;
+      aspect-ratio: 16/7; display: flex;
+      box-shadow: 0 4px 24px rgba(13,42,94,0.25);
+      border: 2px solid rgba(201,168,76,0.3);
+      position: relative;
+    }
+    #preview-stage { flex: 1; display: none; grid-template-columns: 1fr 1px 1fr; }
+    #preview-div { background: rgba(255,255,255,0.08); }
+    .preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 3%; text-align: center; }
+    .preview-lang { letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+    .preview-lang.tw { color: var(--gold); font-size: clamp(7px,1vw,11px); }
+    .preview-lang.en { color: #7ab8f5; font-size: clamp(7px,1vw,11px); }
+    .preview-vlabel { color: rgba(255,255,255,0.35); font-size: clamp(6px,0.7vw,9px); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    #preview-tw { color: #fff; text-align: center; line-height: 1.45; white-space: pre-line; font-weight: 700; font-size: clamp(9px,1.7vw,16px); font-family: var(--font-disp); }
+    #preview-en { color: rgba(255,255,255,0.8); text-align: center; line-height: 1.45; white-space: pre-line; font-size: clamp(8px,1.2vw,12px); }
+    #preview-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); font-size: 13px; gap: 6px; width: 100%; }
+    #preview-empty .cross { font-size: 28px; opacity: 0.3; }
+    /* Gold corner accents */
+    #slide-preview::before, #slide-preview::after {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      border-color: var(--gold); border-style: solid; opacity: 0.5;
+    }
+    #slide-preview::before { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+    #slide-preview::after  { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
 
-    /* Controls */
-    #slide-controls { display: flex; align-items: center; gap: 10px; padding: 10px 12px; flex-shrink: 0; }
+    /* Controls row */
+    #slide-controls { display: flex; align-items: center; gap: 10px; padding: 10px 12px 6px; flex-shrink: 0; }
     #hymn-title-bar { flex: 1; min-width: 0; }
-    #hymn-title-bar h2 { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    #hymn-title-bar p { font-size: 11px; color: var(--text2); margin-top: 1px; }
-    .ctrl-btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; white-space: nowrap; }
-    .ctrl-btn:disabled { opacity: 0.25; cursor: default; }
-    #btn-prev-slide { background: var(--surface); border: 1px solid var(--border2); color: var(--text); }
-    #btn-prev-slide:not(:disabled):hover { background: #e8e8e8; }
-    #btn-next-slide { background: var(--purple); color: #fff; font-size: 15px; padding: 9px 24px; }
-    #btn-next-slide:not(:disabled):hover { background: #3C3489; }
-    #slide-pos { font-size: 12px; color: var(--text3); font-weight: 700; white-space: nowrap; }
+    #hymn-title-bar h2 { font-family: var(--font-disp); font-size: 15px; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #hymn-title-bar p { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+    #slide-pos { font-size: 12px; color: var(--text-light); font-weight: 700; white-space: nowrap; background: var(--blue-pale); padding: 4px 10px; border-radius: 20px; }
+    .ctrl-btn { padding: 9px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; font-family: var(--font-body); cursor: pointer; border: none; white-space: nowrap; transition: all 0.15s; }
+    .ctrl-btn:disabled { opacity: 0.2; cursor: default; transform: none !important; }
+    #btn-prev { background: var(--white); border: 1.5px solid var(--border); color: var(--text); }
+    #btn-prev:not(:disabled):hover { background: var(--blue-pale); border-color: var(--blue-light); }
+    #btn-next { background: var(--blue); color: #fff; font-size: 15px; padding: 9px 28px; box-shadow: 0 2px 8px rgba(26,75,156,0.3); }
+    #btn-next:not(:disabled):hover { background: var(--navy); transform: translateY(-1px); }
 
-    /* Font + Live row */
-    #bottom-row { display: flex; align-items: center; gap: 8px; padding: 0 12px 8px; flex-shrink: 0; }
-    .font-btn { padding: 4px 10px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; font-size: 13px; }
-    #fs-val { font-size: 12px; font-weight: 700; min-width: 22px; text-align: center; color: var(--text2); }
-    .spacer { flex: 1; }
-    #live-btn { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; background: var(--green); color: #fff; white-space: nowrap; }
-    #live-btn:hover { background: #155e39; }
-    #live-btn.off { background: #c0392b; }
-    #live-btn.off:hover { background: #96281b; }
-    #tv-btn { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; background: #1a4a7a; color: #fff; white-space: nowrap; }
-    #tv-btn:hover { background: #123a5e; }
+    /* Present button row */
+    #action-row { display: flex; align-items: center; gap: 8px; padding: 0 12px 8px; flex-shrink: 0; }
+    #font-label { font-size: 12px; color: var(--text-light); }
+    .font-btn { padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); color: var(--text); cursor: pointer; font-size: 13px; font-family: var(--font-body); transition: background 0.1s; }
+    .font-btn:hover { background: var(--blue-pale); }
+    #fs-val { font-size: 12px; font-weight: 700; min-width: 24px; text-align: center; color: var(--text-light); }
+    #spacer { flex: 1; }
+    #present-btn {
+      padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 700;
+      font-family: var(--font-body); cursor: pointer; border: none;
+      background: var(--gold); color: var(--navy);
+      box-shadow: 0 2px 10px rgba(201,168,76,0.4);
+      display: flex; align-items: center; gap: 7px; transition: all 0.15s;
+    }
+    #present-btn:hover { background: var(--gold-dark); transform: translateY(-1px); }
+    #present-btn.presenting { background: #c0392b; color: #fff; box-shadow: 0 2px 10px rgba(192,57,43,0.4); }
 
     /* Verse strip */
-    #verse-strip-wrap { flex: 1; overflow-y: auto; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
-    #strip-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; padding: 4px 0 2px; flex-shrink: 0; }
-    .verse-thumb { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; cursor: pointer; display: grid; grid-template-columns: 56px 1fr 1fr; gap: 0 10px; align-items: start; flex-shrink: 0; transition: border-color 0.1s; }
-    .verse-thumb:hover { border-color: var(--purple-mid); }
-    .verse-thumb.active { border-color: var(--purple); background: var(--purple-light); }
-    .verse-thumb.live { border-color: var(--green); background: var(--green-light); }
-    .vt-label { font-size: 10px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 1px; }
-    .verse-thumb.live .vt-label { color: var(--green); }
+    #verse-strip-wrap { flex: 1; overflow-y: auto; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 5px; }
+    #strip-label { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 0 2px; flex-shrink: 0; }
+    .verse-thumb {
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 9px 12px; cursor: pointer; flex-shrink: 0;
+      display: grid; grid-template-columns: 58px 1fr 1fr; gap: 0 10px; align-items: start;
+      transition: border-color 0.1s, background 0.1s;
+    }
+    .verse-thumb:hover { border-color: var(--blue-light); background: var(--blue-pale); }
+    .verse-thumb.active { border-color: var(--blue); background: var(--blue-pale); }
+    .verse-thumb.presenting-verse { border-color: var(--gold); background: #fffbf0; }
+    .vt-label { font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 1px; }
+    .verse-thumb.presenting-verse .vt-label { color: var(--gold-dark); }
     .vt-tw { font-size: 11px; color: var(--text); line-height: 1.5; white-space: pre-line; }
-    .vt-en { font-size: 11px; color: var(--text2); line-height: 1.5; white-space: pre-line; }
-    .live-tag { font-size: 9px; font-weight: 700; background: var(--green); color: #fff; padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
+    .vt-en { font-size: 11px; color: var(--text-light); line-height: 1.5; white-space: pre-line; }
+    .on-air-tag { font-size: 9px; font-weight: 700; background: var(--gold); color: var(--navy); padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
 
-    /* ── TV Display ── */
-    #tv-display { display: none; position: fixed; inset: 0; background: #080810; z-index: 9000; flex-direction: column; }
-    #tv-display.show { display: flex; }
-    #tv-topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; flex-shrink: 0; }
-    #tv-hymn-name { color: #444; font-size: 12px; flex: 1; }
-    #tv-counter { color: #444; font-size: 12px; }
-    #tv-badge { font-size: 11px; padding: 3px 11px; border-radius: 20px; background: #0d2a1a; color: #3ae070; border: 1px solid #1a4a2a; display: flex; align-items: center; gap: 5px; }
-    .tv-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #3ae070; animation: blink 1.1s infinite; }
-    #tv-exit { color: #555; font-size: 11px; cursor: pointer; padding: 4px 10px; border: 1px solid #333; border-radius: 6px; }
-    #tv-exit:hover { color: #999; }
-    #tv-stage { flex: 1; display: grid; grid-template-columns: 1fr 1px 1fr; overflow: hidden; }
-    #tv-divider { background: #1a1a2a; }
-    .tv-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5vw; text-align: center; }
-    .tv-lang { letter-spacing: 0.13em; text-transform: uppercase; font-weight: 800; margin-bottom: 22px; }
-    #tv-lang-tw { color: #8b7eee; }
-    #tv-lang-en { color: #6aab85; }
-    .tv-vlabel { color: #444; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
-    #tv-tw { color: #fff; line-height: 1.55; white-space: pre-line; font-weight: 700; text-align: center; }
-    #tv-en { color: #ddd; line-height: 1.6; white-space: pre-line; text-align: center; }
-    #tv-waiting { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: #333; flex: 1; }
-    #tv-waiting .wi { font-size: 52px; }
-    #tv-waiting p { font-size: 15px; }
-    #tv-waiting small { font-size: 12px; color: #2a2a2a; }
+    /* ══════════════════════════════════════════
+       PRESENTATION WINDOW (opens in new tab/window)
+       Dark, fullscreen, big text
+    ══════════════════════════════════════════ */
+    #pres-window {
+      display: none; position: fixed; inset: 0;
+      background: var(--navy); z-index: 9999;
+      flex-direction: column;
+    }
+    #pres-window.show { display: flex; }
+    #pres-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; flex-shrink: 0;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    #pres-hymn-info { color: rgba(255,255,255,0.4); font-size: 12px; }
+    #pres-counter { color: rgba(255,255,255,0.35); font-size: 12px; }
+    #pres-close { color: rgba(255,255,255,0.4); font-size: 11px; cursor: pointer; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-family: var(--font-body); background: none; }
+    #pres-close:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+    #pres-stage { flex: 1; display: grid; grid-template-columns: 1fr 1px 1fr; overflow: hidden; }
+    #pres-divider { background: rgba(255,255,255,0.07); }
+    .pres-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5vw; text-align: center; }
+    .pres-lang { letter-spacing: 0.13em; text-transform: uppercase; font-weight: 800; margin-bottom: 20px; font-family: var(--font-body); }
+    #pres-lang-tw { color: var(--gold); }
+    #pres-lang-en { color: #7ab8f5; }
+    .pres-vlabel { color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; font-family: var(--font-body); }
+    #pres-tw { color: #fff; line-height: 1.55; white-space: pre-line; font-weight: 700; text-align: center; font-family: var(--font-disp); }
+    #pres-en { color: rgba(255,255,255,0.82); line-height: 1.6; white-space: pre-line; text-align: center; font-family: var(--font-body); }
+    #pres-nav { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px; flex-shrink: 0; border-top: 1px solid rgba(201,168,76,0.15); }
+    .pnav { padding: 10px 30px; background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-size: 14px; font-weight: 700; font-family: var(--font-body); cursor: pointer; transition: background 0.15s; }
+    .pnav:hover { background: rgba(255,255,255,0.13); }
+    .pnav:disabled { opacity: 0.18; cursor: default; }
+    .pnav.gold { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+    .pnav.gold:hover { background: var(--gold-dark); }
+    #pres-pos { color: rgba(255,255,255,0.3); font-size: 13px; font-weight: 700; min-width: 60px; text-align: center; }
 
-    /* ── Modals ── */
-    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; }
+    /* ── ADD/EDIT MODAL ─────────────────────── */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(13,42,94,0.5); z-index: 10000; align-items: center; justify-content: center; }
     .modal-bg.show { display: flex; }
-    .modal-box { background: var(--surface); border-radius: 13px; padding: 26px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
-    .modal-box h2 { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
-    .mf { margin-bottom: 12px; }
-    .mf label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .mf input, .mf textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border2); border-radius: 7px; font-size: 13px; color: var(--text); background: var(--bg); font-family: inherit; outline: none; }
-    .mf textarea { min-height: 65px; resize: vertical; }
-    .mf input:focus, .mf textarea:focus { border-color: var(--purple-mid); }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-    .btn-cancel { padding: 8px 15px; border: 1px solid var(--border2); border-radius: 7px; background: transparent; cursor: pointer; font-size: 13px; }
-    .btn-primary { padding: 8px 18px; background: var(--purple); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; }
-    #hymn-modal-box { width: 620px; }
+    .modal-box { background: var(--white); border-radius: 14px; padding: 28px; width: 620px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(13,42,94,0.2); }
+    .modal-box h2 { font-family: var(--font-disp); font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+    .mf { margin-bottom: 13px; }
+    .mf label { display: block; font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .mf input, .mf textarea { width: 100%; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); background: var(--off-white); font-family: var(--font-body); outline: none; transition: border-color 0.15s; }
+    .mf textarea { min-height: 68px; resize: vertical; }
+    .mf input:focus, .mf textarea:focus { border-color: var(--blue-light); background: #fff; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+    .btn-cancel { padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; font-family: var(--font-body); color: var(--text-light); }
+    .btn-cancel:hover { background: var(--off-white); }
+    .btn-primary { padding: 9px 22px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: var(--font-body); cursor: pointer; transition: background 0.15s; }
+    .btn-primary:hover { background: var(--navy); }
     .ve-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .ve-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
-    .verse-editor { border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
-    .ve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .ve-header input { border: none; background: transparent; font-size: 11px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.07em; outline: none; width: 120px; }
+    .verse-editor { border: 1.5px solid var(--border); border-radius: 9px; padding: 11px; margin-bottom: 9px; }
+    .ve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+    .ve-header input { border: none; background: transparent; font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.07em; outline: none; width: 130px; font-family: var(--font-body); }
     .remove-verse { background: none; border: none; color: #e24b4a; cursor: pointer; font-size: 16px; line-height: 1; }
-    #add-verse-row { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-    .avt { padding: 5px 11px; border: 1px dashed var(--border2); border-radius: 6px; background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; }
-    .avt:hover { background: var(--bg); }
-    /* Firebase modal */
-    .fb-sub { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.55; }
-    .fb-sub a { color: var(--purple); }
-    .fb-steps { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; line-height: 2.1; }
-    .fb-steps ol { padding-left: 16px; }
-    .fb-steps code { background: #e8e7f5; color: var(--purple); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
-    #fb-status { font-size: 12px; margin-top: 10px; padding: 8px 12px; border-radius: 6px; display: none; }
-    #fb-status.ok { background: #eafaf2; color: #1a7a4a; display: block; }
-    #fb-status.err { background: #feecec; color: #c0392b; display: block; }
-    /* Setup bar */
-    #setup-bar { background: #fffbea; border-bottom: 1px solid #e6d84a; padding: 8px 16px; font-size: 12px; color: #6b5c00; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    #setup-bar.hidden { display: none; }
-    #setup-bar-btn { margin-left: auto; padding: 5px 13px; background: var(--purple); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    #add-verse-row { display: flex; gap: 7px; margin-top: 4px; flex-wrap: wrap; }
+    .avt { padding: 6px 13px; border: 1.5px dashed var(--border); border-radius: 7px; background: transparent; color: var(--text-light); font-size: 12px; font-family: var(--font-body); cursor: pointer; }
+    .avt:hover { background: var(--blue-pale); border-color: var(--blue-light); }
 
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   </style>
 </head>
 <body>
 
-<!-- ══ TV DISPLAY ══ -->
-<div id="tv-display">
-  <div id="tv-topbar">
-    <div id="tv-hymn-name"></div>
-    <div id="tv-counter"></div>
-    <div id="tv-badge"><div class="tv-badge-dot"></div>TV Display — Live</div>
-    <div id="tv-exit" onclick="exitTV()">Exit</div>
+<!-- ══ PRESENTATION WINDOW (fullscreen on TV) ══ -->
+<div id="pres-window">
+  <div id="pres-topbar">
+    <div id="pres-hymn-info"></div>
+    <div id="pres-counter"></div>
+    <button id="pres-close" onclick="stopPresenting()">✕ Stop Presenting</button>
   </div>
-  <div id="tv-stage" style="display:none">
-    <div class="tv-pane">
-      <div class="tv-lang" id="tv-lang-tw">Twi</div>
-      <div class="tv-vlabel" id="tv-vlabel-tw"></div>
-      <div id="tv-tw"></div>
+  <div id="pres-stage">
+    <div class="pres-pane">
+      <div class="pres-lang" id="pres-lang-tw">Twi</div>
+      <div class="pres-vlabel" id="pres-vlabel-tw" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="pres-tw"></div>
     </div>
-    <div id="tv-divider"></div>
-    <div class="tv-pane">
-      <div class="tv-lang" id="tv-lang-en">English</div>
-      <div class="tv-vlabel" id="tv-vlabel-en"></div>
-      <div id="tv-en"></div>
+    <div id="pres-divider"></div>
+    <div class="pres-pane">
+      <div class="pres-lang" id="pres-lang-en">English</div>
+      <div class="pres-vlabel" id="pres-vlabel-en" style="font-size:clamp(10px,1vw,14px)"></div>
+      <div id="pres-en"></div>
     </div>
   </div>
-  <div id="tv-waiting">
-    <div class="wi">📺</div>
-    <p>TV Display ready</p>
-    <small>Waiting for presenter to go live...</small>
-  </div>
-</div>
-
-<!-- ══ FIREBASE MODAL ══ -->
-<div class="modal-bg" id="fb-modal-bg" onclick="closeFbBg(event)">
-  <div class="modal-box">
-    <h2>🔥 Connect Firebase</h2>
-    <p class="fb-sub">
-      Firebase lets all TVs sync wirelessly — free forever.<br>
-      <a href="https://console.firebase.google.com/" target="_blank">Open Firebase Console</a> → select your <strong>church-hymnal</strong> project:
-    </p>
-    <div class="fb-steps">
-      <ol>
-        <li>Click <strong>Build → Realtime Database → Create database</strong> → Start in test mode</li>
-        <li>⚙️ Gear → <strong>Project Settings → Your apps → Web (&lt;/&gt;)</strong> → Register app</li>
-        <li>Copy <code>databaseURL</code> and <code>apiKey</code> from the config shown</li>
-      </ol>
-    </div>
-    <div class="mf"><label>Database URL</label><input type="text" id="fb-url" placeholder="https://church-hymnal-default-rtdb.firebaseio.com" /></div>
-    <div class="mf"><label>API Key</label><input type="text" id="fb-key" placeholder="AIzaSy..." /></div>
-    <div id="fb-status"></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeFbModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveFbConfig()">Save & Connect</button>
-    </div>
+  <div id="pres-nav">
+    <button class="pnav" id="pnav-prev" onclick="presNav(-1)">← Prev</button>
+    <span id="pres-pos"></span>
+    <button class="pnav gold" id="pnav-next" onclick="presNav(1)">Next →</button>
   </div>
 </div>
 
 <!-- ══ ADD/EDIT HYMN MODAL ══ -->
 <div class="modal-bg" id="hymn-modal-bg" onclick="closeHymnBg(event)">
-  <div class="modal-box" id="hymn-modal-box">
+  <div class="modal-box">
     <h2 id="modal-title">Add New Hymn</h2>
-    <div class="mf"><label>Hymn Number</label><input type="number" id="m-num" placeholder="e.g. 42" /></div>
-    <div class="mf"><label>Title in Twi</label><input type="text" id="m-tw" placeholder="Twi title..." /></div>
-    <div class="mf"><label>Title in English</label><input type="text" id="m-en" placeholder="English title..." /></div>
+    <div class="mf"><label>Hymn Number</label><input type="number" id="m-num" placeholder="e.g. 42"/></div>
+    <div class="mf"><label>Title in Twi</label><input type="text" id="m-tw" placeholder="Twi title..."/></div>
+    <div class="mf"><label>Title in English</label><input type="text" id="m-en" placeholder="English title..."/></div>
     <div class="mf">
       <label>Verses</label>
       <div id="verse-editors"></div>
@@ -242,30 +258,28 @@
   </div>
 </div>
 
-<!-- ══ FIREBASE SETUP BAR ══ -->
-<div id="setup-bar">
-  ⚠️ <strong>Firebase not connected</strong> — needed for wireless TV sync. HDMI works without it.
-  <button id="setup-bar-btn" onclick="openFbModal()">Connect Firebase →</button>
-</div>
-
 <!-- ══ HEADER ══ -->
 <div id="header">
-  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-  <h1>Church Hymnal Projector</h1>
+  <div class="logo">
+    <div class="logo-cross">✝</div>
+    <div>
+      <div class="logo-text">Church Hymnal Projector</div>
+      <div class="logo-sub">Phoenix Ghanaian SDA</div>
+    </div>
+  </div>
   <div id="hdr-right">
-    <div class="live-pill" id="live-pill"><div class="live-dot"></div>LIVE</div>
-    <span style="font-size:11px;opacity:.55" id="hymn-count"></span>
-    <button class="hdr-btn" onclick="openFbModal()">⚙️ Firebase</button>
+    <div class="hdr-pill" id="live-pill"><div class="pill-dot"></div>PRESENTING</div>
+    <span class="hdr-count" id="hymn-count"></span>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
+<!-- ══ APP ══ -->
 <div id="app">
 
   <!-- Sidebar -->
   <div id="sidebar">
     <div class="search-wrap">
-      <input type="text" id="search" placeholder="Search hymns..." oninput="filterHymns(this.value)" />
+      <input type="text" id="search" placeholder="🔍 Search hymns..." oninput="filterHymns(this.value)"/>
     </div>
     <div id="hymn-list"></div>
     <div class="sidebar-footer">
@@ -275,64 +289,64 @@
     </div>
   </div>
 
-  <!-- Presenter -->
+  <!-- Presenter panel -->
   <div id="presenter">
 
-    <!-- Slide preview -->
+    <!-- Mini slide preview -->
     <div id="slide-preview">
       <div id="preview-stage">
         <div class="preview-pane">
           <div class="preview-lang tw">Twi</div>
-          <div class="preview-vlabel" id="preview-vlabel-tw"></div>
+          <div class="preview-vlabel" id="pv-vlabel-tw"></div>
           <div id="preview-tw"></div>
         </div>
         <div id="preview-div"></div>
         <div class="preview-pane">
           <div class="preview-lang en">English</div>
-          <div class="preview-vlabel" id="preview-vlabel-en"></div>
+          <div class="preview-vlabel" id="pv-vlabel-en"></div>
           <div id="preview-en"></div>
         </div>
       </div>
-      <div id="preview-empty">♪ Select a hymn to begin</div>
+      <div id="preview-empty">
+        <div class="cross">✝</div>
+        <div>Select a hymn to begin</div>
+      </div>
     </div>
 
     <!-- Slide controls -->
     <div id="slide-controls">
       <div id="hymn-title-bar">
-        <h2 id="ctrl-hymn-tw">No hymn selected</h2>
-        <p id="ctrl-hymn-en"></p>
+        <h2 id="ctrl-title">No hymn selected</h2>
+        <p id="ctrl-sub"></p>
       </div>
       <span id="slide-pos"></span>
-      <button class="ctrl-btn" id="btn-prev-slide" onclick="changeVerse(-1)" disabled>← Prev</button>
-      <button class="ctrl-btn" id="btn-next-slide" onclick="changeVerse(1)" disabled>Next →</button>
+      <button class="ctrl-btn" id="btn-prev" onclick="changeVerse(-1)" disabled>← Prev</button>
+      <button class="ctrl-btn" id="btn-next" onclick="changeVerse(1)" disabled>Next →</button>
     </div>
 
-    <!-- Font + Live + TV buttons -->
-    <div id="bottom-row">
-      <span style="font-size:12px;color:var(--text2)">Font:</span>
+    <!-- Font + Present button -->
+    <div id="action-row">
+      <span id="font-label">Font:</span>
       <button class="font-btn" onclick="changeFont(-2)">A−</button>
-      <span id="fs-val">28</span>
+      <span id="fs-val">32</span>
       <button class="font-btn" onclick="changeFont(2)">A+</button>
-      <div class="spacer"></div>
-      <button id="tv-btn" onclick="openTV()">📺 Open on TV</button>
-      <button id="live-btn" onclick="toggleLive()">📡 Go Live</button>
+      <div id="spacer"></div>
+      <button id="present-btn" onclick="togglePresent()" disabled>
+        ▶ Present
+      </button>
     </div>
 
     <!-- Verse strip -->
     <div id="verse-strip-wrap">
-      <div id="strip-label">Verses — click any to jump</div>
+      <div id="strip-label">All Verses — click to jump</div>
       <div id="verse-strip"></div>
     </div>
 
   </div>
 </div>
 
-<!-- Firebase -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
-
 <script>
-// ══ Default Hymns ══════════════════════════════════════════
+// ══ DATA ══════════════════════════════════════════════════
 const DEFAULT_HYMNS = [
   { num:1, tw:"Onyame Ayɛ Yiye", en:"God Has Been Good", verses:[
     { label:"Verse 1", tw:"Onyame ayɛ yiye,\nOyɛ Nyankopɔn kɛse,\nN'adom na ɛhyɛ yɛn ma,\nDaa daa n'ayɛ yiye.", en:"God has been good to us,\nHe is the Almighty God,\nHis grace fills us always,\nForever He is good." },
@@ -359,112 +373,19 @@ const DEFAULT_HYMNS = [
   ]}
 ];
 
-const HYMNS_KEY = 'church_hymns_v3';
-const FB_KEY    = 'church_fb_v2';
+const HYMNS_KEY = 'church_hymns_v4';
 
 let hymns = [], filtered = [];
 let selectedHymn = null, currentVerse = 0;
-let fontSize = 28;
-let isLive = false, liveHymnNum = -1, liveVerseIdx = -1;
-let fbRef = null, fbReady = false;
+let fontSize = 32;
+let isPresenting = false;
 let editingIdx = null, veCount = 0;
 
-// ══ Helpers ═══════════════════════════════════════════════
+// ══ Helpers ════════════════════════════════════════════════
 const el  = id => document.getElementById(id);
 const txt = (id, v) => { const e=el(id); if(e) e.textContent=v; };
 
-// ══ Firebase ═══════════════════════════════════════════════
-function initFirebase(cfg) {
-  try {
-    if (firebase.apps.length) firebase.apps.forEach(a=>{try{a.delete();}catch{}});
-    firebase.initializeApp({ apiKey: cfg.apiKey, databaseURL: cfg.databaseURL });
-    fbRef = firebase.database().ref('live');
-    fbReady = true;
-    el('setup-bar').classList.add('hidden');
-    return true;
-  } catch(e) { fbReady=false; return false; }
-}
-
-function openFbModal() { el('fb-modal-bg').classList.add('show'); }
-function closeFbModal() { el('fb-modal-bg').classList.remove('show'); }
-function closeFbBg(e) { if(e.target===el('fb-modal-bg')) closeFbModal(); }
-
-function saveFbConfig() {
-  const url = el('fb-url').value.trim();
-  const key = el('fb-key').value.trim();
-  const st  = el('fb-status');
-  if (!url||!key) { st.className='err'; st.textContent='Please fill in both fields.'; return; }
-  if (initFirebase({databaseURL:url, apiKey:key})) {
-    localStorage.setItem(FB_KEY, JSON.stringify({databaseURL:url, apiKey:key}));
-    st.className='ok'; st.textContent='✓ Connected! TVs will sync instantly when you Go Live.';
-    setTimeout(closeFbModal, 1800);
-  } else {
-    st.className='err'; st.textContent='Could not connect — check your Database URL and API Key.';
-  }
-}
-
-// ══ Live Broadcast ═════════════════════════════════════════
-function toggleLive() {
-  if (!selectedHymn) { alert('Please select a hymn first.'); return; }
-  if (!fbReady) { openFbModal(); return; }
-  isLive = !isLive;
-  const btn = el('live-btn');
-  if (isLive) {
-    btn.textContent = '⏹ Stop Live';
-    btn.classList.add('off');
-    el('live-pill').classList.add('show');
-    liveHymnNum  = selectedHymn.num;
-    liveVerseIdx = currentVerse;
-    pushLive();
-  } else {
-    btn.textContent = '📡 Go Live';
-    btn.classList.remove('off');
-    el('live-pill').classList.remove('show');
-    liveHymnNum = liveVerseIdx = -1;
-    if (fbRef) fbRef.set({active:false});
-  }
-  renderStrip();
-}
-
-function pushLive() {
-  if (!isLive||!fbRef||!selectedHymn) return;
-  const v = selectedHymn.verses[liveVerseIdx];
-  fbRef.set({ active:true,
-    hymnNum:selectedHymn.num, hymnTw:selectedHymn.tw, hymnEn:selectedHymn.en,
-    verseIdx:liveVerseIdx, label:v.label, tw:v.tw, en:v.en,
-    total:selectedHymn.verses.length, fontSize, ts:Date.now() });
-}
-
-// ══ TV Display ═════════════════════════════════════════════
-function openTV() {
-  if (!fbReady) { openFbModal(); return; }
-  el('tv-display').classList.add('show');
-  fbRef.on('value', snap => {
-    const d = snap.val();
-    const stage   = el('tv-stage');
-    const waiting = el('tv-waiting');
-    if (!d||!d.active) { stage.style.display='none'; waiting.style.display='flex'; return; }
-    stage.style.display='grid'; waiting.style.display='none';
-    const fs = d.fontSize||28;
-    txt('tv-hymn-name', `No. ${d.hymnNum} — ${d.hymnTw}`);
-    txt('tv-counter',   `${d.verseIdx+1} / ${d.total}`);
-    txt('tv-vlabel-tw', d.label); txt('tv-vlabel-en', d.label);
-    txt('tv-tw', d.tw);           txt('tv-en', d.en);
-    el('tv-tw').style.fontSize      = `clamp(${fs}px,5vw,${fs*2.8}px)`;
-    el('tv-en').style.fontSize      = `clamp(${Math.round(fs*.72)}px,3vw,${Math.round(fs*2)}px)`;
-    el('tv-lang-tw').style.fontSize = `clamp(13px,1.5vw,20px)`;
-    el('tv-lang-en').style.fontSize = `clamp(13px,1.5vw,20px)`;
-    el('tv-vlabel-tw').style.fontSize = `clamp(10px,1vw,14px)`;
-    el('tv-vlabel-en').style.fontSize = `clamp(10px,1vw,14px)`;
-  });
-}
-
-function exitTV() {
-  if (fbRef) fbRef.off();
-  el('tv-display').classList.remove('show');
-}
-
-// ══ Hymn List ══════════════════════════════════════════════
+// ══ Hymn Data ══════════════════════════════════════════════
 function loadHymns() {
   try { const s=localStorage.getItem(HYMNS_KEY); return s?JSON.parse(s):[...DEFAULT_HYMNS]; }
   catch { return [...DEFAULT_HYMNS]; }
@@ -472,15 +393,15 @@ function loadHymns() {
 function saveHymns() { try{localStorage.setItem(HYMNS_KEY,JSON.stringify(hymns));}catch{} }
 
 function filterHymns(q) {
-  q = q.toLowerCase().trim();
-  filtered = q ? hymns.filter(h=>h.tw.toLowerCase().includes(q)||h.en.toLowerCase().includes(q)||String(h.num).includes(q)) : [...hymns];
+  q=q.toLowerCase().trim();
+  filtered=q?hymns.filter(h=>h.tw.toLowerCase().includes(q)||h.en.toLowerCase().includes(q)||String(h.num).includes(q)):[...hymns];
   filtered.sort((a,b)=>a.num-b.num);
   renderList();
 }
 
 function renderList() {
   el('hymn-list').innerHTML = filtered.length===0
-    ? '<div style="padding:16px;text-align:center;color:#999;font-size:12px;">No hymns found</div>'
+    ? '<div style="padding:16px;text-align:center;color:#5a6a85;font-size:12px;">No hymns found</div>'
     : filtered.map(h=>`<div class="hymn-item${selectedHymn&&selectedHymn.num===h.num?' active':''}" onclick="selectHymn(${h.num})">
         <div class="num">No. ${h.num}</div>
         <div class="ttw">${h.tw}</div>
@@ -494,25 +415,33 @@ function selectHymn(num) {
   currentVerse = 0;
   el('edit-btn').style.display = '';
   el('del-btn').style.display  = '';
-  if (isLive) { liveHymnNum=selectedHymn.num; liveVerseIdx=0; pushLive(); }
+  el('present-btn').disabled   = false;
   renderList();
   renderPresenter();
+  // If already presenting, update the presentation
+  if (isPresenting) renderPresWindow();
 }
 
-// ══ Presenter ══════════════════════════════════════════════
+// ══ Presenter view ══════════════════════════════════════════
 function renderPresenter() {
   if (!selectedHymn) return;
   const v = selectedHymn.verses[currentVerse];
-  txt('ctrl-hymn-tw', selectedHymn.tw);
-  txt('ctrl-hymn-en', `${selectedHymn.en} · No. ${selectedHymn.num}`);
+
+  // Title bar
+  txt('ctrl-title', selectedHymn.tw);
+  txt('ctrl-sub', `${selectedHymn.en} · No. ${selectedHymn.num}`);
   txt('slide-pos', `${currentVerse+1} / ${selectedHymn.verses.length}`);
-  el('btn-prev-slide').disabled = currentVerse===0;
-  el('btn-next-slide').disabled = currentVerse===selectedHymn.verses.length-1;
-  // Preview
+
+  // Prev/Next
+  el('btn-prev').disabled = currentVerse===0;
+  el('btn-next').disabled = currentVerse===selectedHymn.verses.length-1;
+
+  // Mini preview
   el('preview-empty').style.display  = 'none';
   el('preview-stage').style.display  = 'grid';
-  txt('preview-vlabel-tw', v.label); txt('preview-vlabel-en', v.label);
-  txt('preview-tw', v.tw);           txt('preview-en', v.en);
+  txt('pv-vlabel-tw', v.label); txt('pv-vlabel-en', v.label);
+  txt('preview-tw', v.tw);      txt('preview-en', v.en);
+
   renderStrip();
 }
 
@@ -520,42 +449,103 @@ function renderStrip() {
   if (!selectedHymn) return;
   el('verse-strip').innerHTML = selectedHymn.verses.map((v,i) => {
     const active = i===currentVerse;
-    const live   = isLive && liveHymnNum===selectedHymn.num && liveVerseIdx===i;
-    return `<div class="verse-thumb${active?' active':''}${live?' live':''}" onclick="jumpToVerse(${i})">
-      <div class="vt-label">${v.label}${live?'<span class="live-tag">LIVE</span>':''}</div>
+    const pres   = isPresenting && i===currentVerse;
+    return `<div class="verse-thumb${active?' active':''}${pres?' presenting-verse':''}" onclick="jumpToVerse(${i})">
+      <div class="vt-label">${v.label}${pres?'<span class="on-air-tag">ON AIR</span>':''}</div>
       <div class="vt-tw">${v.tw}</div>
       <div class="vt-en">${v.en}</div>
     </div>`;
   }).join('');
 }
 
+// ══ Presentation Window (like PowerPoint presenter view) ════
+function togglePresent() {
+  if (!selectedHymn) return;
+  if (isPresenting) { stopPresenting(); return; }
+
+  isPresenting = true;
+  el('pres-window').classList.add('show');
+  el('present-btn').textContent = '⏹ Stop';
+  el('present-btn').classList.add('presenting');
+  el('live-pill').classList.add('show');
+  renderPresWindow();
+
+  // Try to go fullscreen
+  el('pres-window').requestFullscreen?.().catch(()=>{});
+}
+
+function stopPresenting() {
+  isPresenting = false;
+  el('pres-window').classList.remove('show');
+  el('present-btn').textContent = '▶ Present';
+  el('present-btn').classList.remove('presenting');
+  el('live-pill').classList.remove('show');
+  if (document.fullscreenElement) document.exitFullscreen?.();
+  renderStrip();
+}
+
+function renderPresWindow() {
+  if (!selectedHymn) return;
+  const v = selectedHymn.verses[currentVerse];
+  const total = selectedHymn.verses.length;
+
+  txt('pres-hymn-info', `No. ${selectedHymn.num} — ${selectedHymn.tw}`);
+  txt('pres-counter', `${currentVerse+1} of ${total}`);
+  txt('pres-vlabel-tw', v.label);
+  txt('pres-vlabel-en', v.label);
+  txt('pres-tw', v.tw);
+  txt('pres-en', v.en);
+  txt('pres-pos', `${currentVerse+1} / ${total}`);
+
+  const fs = fontSize;
+  el('pres-tw').style.fontSize      = `clamp(${fs}px, 4.5vw, ${fs*2.5}px)`;
+  el('pres-en').style.fontSize      = `clamp(${Math.round(fs*.7)}px, 2.8vw, ${Math.round(fs*1.7)}px)`;
+  el('pres-lang-tw').style.fontSize = `clamp(12px,1.4vw,18px)`;
+  el('pres-lang-en').style.fontSize = `clamp(12px,1.4vw,18px)`;
+  el('pres-vlabel-tw').style.fontSize = `clamp(10px,1vw,14px)`;
+  el('pres-vlabel-en').style.fontSize = `clamp(10px,1vw,14px)`;
+
+  el('pnav-prev').disabled = currentVerse===0;
+  el('pnav-next').disabled = currentVerse===total-1;
+
+  renderStrip(); // update "ON AIR" badge in presenter
+}
+
+function presNav(dir) {
+  const n = currentVerse + dir;
+  if (n<0||!selectedHymn||n>=selectedHymn.verses.length) return;
+  jumpToVerse(n);
+}
+
 function changeVerse(dir) {
   if (!selectedHymn) return;
-  const n = currentVerse+dir;
+  const n = currentVerse + dir;
   if (n<0||n>=selectedHymn.verses.length) return;
   jumpToVerse(n);
 }
 
 function jumpToVerse(i) {
   currentVerse = i;
-  if (isLive) { liveVerseIdx=i; pushLive(); }
   renderPresenter();
+  if (isPresenting) renderPresWindow();
 }
 
 function changeFont(d) {
-  fontSize = Math.max(14, Math.min(72, fontSize+d));
+  fontSize = Math.max(16, Math.min(80, fontSize+d));
   el('fs-val').textContent = fontSize;
-  if (isLive) pushLive();
+  if (isPresenting) renderPresWindow();
 }
 
-// ══ Keyboard (like PowerPoint) ════════════════════════════
+// ══ Keyboard shortcuts (like PowerPoint) ══════════════════
 document.addEventListener('keydown', e => {
   if (document.querySelector('.modal-bg.show')) return;
   if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); changeVerse(1); }
   else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); changeVerse(-1); }
+  else if (e.key==='Escape' && isPresenting) stopPresenting();
+  else if (e.key==='F5' && selectedHymn) { e.preventDefault(); togglePresent(); }
 });
 
-// ══ Add / Edit Hymn ════════════════════════════════════════
+// ══ Add/Edit Hymn ══════════════════════════════════════════
 function openHymnModal(num) {
   editingIdx=null; veCount=0;
   el('m-num').value=''; el('m-tw').value=''; el('m-en').value='';
@@ -580,11 +570,14 @@ function addVE(lb, tw='', en='') {
   const id = 've_'+veCount;
   const d = document.createElement('div');
   d.className='verse-editor'; d.id=id;
-  d.innerHTML=`<div class="ve-header"><input type="text" value="${label}"/><button class="remove-verse" onclick="document.getElementById('${id}').remove()">✕</button></div>
-    <div class="ve-cols">
-      <div><div class="ve-col-label" style="color:#8b7eee;">Twi</div><textarea placeholder="Twi text...">${tw}</textarea></div>
-      <div><div class="ve-col-label" style="color:#6aab85;">English</div><textarea placeholder="English text...">${en}</textarea></div>
-    </div>`;
+  d.innerHTML=`<div class="ve-header">
+    <input type="text" value="${label}"/>
+    <button class="remove-verse" onclick="document.getElementById('${id}').remove()">✕</button>
+  </div>
+  <div class="ve-cols">
+    <div><div class="ve-col-label" style="color:#c9a84c;">Twi</div><textarea placeholder="Twi text...">${tw}</textarea></div>
+    <div><div class="ve-col-label" style="color:#3a7bd5;">English</div><textarea placeholder="English text...">${en}</textarea></div>
+  </div>`;
   el('verse-editors').appendChild(d);
 }
 
@@ -617,8 +610,9 @@ function deleteHymn() {
   el('edit-btn').style.display='none'; el('del-btn').style.display='none';
   el('preview-stage').style.display='none'; el('preview-empty').style.display='flex';
   el('verse-strip').innerHTML='';
-  txt('ctrl-hymn-tw','No hymn selected'); txt('ctrl-hymn-en','');
-  el('btn-prev-slide').disabled=true; el('btn-next-slide').disabled=true;
+  el('present-btn').disabled=true;
+  txt('ctrl-title','No hymn selected'); txt('ctrl-sub','');
+  el('btn-prev').disabled=true; el('btn-next').disabled=true;
   filterHymns(el('search').value);
 }
 
@@ -627,11 +621,7 @@ hymns = loadHymns();
 hymns.sort((a,b)=>a.num-b.num);
 filterHymns('');
 el('preview-stage').style.display='none';
-
-try {
-  const cfg = JSON.parse(localStorage.getItem(FB_KEY)||'null');
-  if (cfg) initFirebase(cfg);
-} catch {}
+el('present-btn').disabled=true;
 </script>
 </body>
 </html>
